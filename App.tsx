@@ -8,12 +8,6 @@ function App() {
   const isDarkMode = useColorScheme() === 'dark';
   const [showSplash, setShowSplash] = useState(true);
 
-  // Auto-hide splash after 2-3 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 2500);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <SafeAreaProvider>
       <StatusBar

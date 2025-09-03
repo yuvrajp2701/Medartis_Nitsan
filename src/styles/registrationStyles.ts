@@ -1,4 +1,4 @@
-// src/styles/registrationStyles.ts
+
 import { StyleSheet } from 'react-native';
 import {
   responsiveFontSize,
@@ -11,40 +11,66 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  logoContainer: {
+    alignItems: 'flex-end',
+    paddingHorizontal: responsiveWidth(5),
+  },
+
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
-    paddingHorizontal: responsiveWidth(5), // ~20px on 375px width
+    paddingHorizontal: responsiveWidth(5),
+    paddingTop: responsiveHeight(2),
   },
-logo: {
-  fontSize: responsiveFontSize(36),
-  fontWeight: '300',
-  color: '#000',
-  fontFamily: 'sans-serif-light',
-  marginBottom: responsiveHeight(2),
-  alignSelf: 'flex-end',              // Push logo to the right
-  paddingRight: responsiveWidth(5),  // Some right padding from screen edge
-},
 
-title: {
-  fontSize: responsiveFontSize(24),
-  fontWeight: '500',
-  textAlign: 'center',
-  marginBottom: responsiveHeight(2.5),
-  color: '#000',
-  alignSelf: 'center',                // Center the title horizontally
-},
+  logo: {
+    fontSize: responsiveFontSize(36),
+    fontWeight: '300',
+    color: '#000',
+    fontFamily: 'sans-serif-light',
+    marginBottom: responsiveHeight(8),
+    alignSelf: 'flex-end',
+    paddingRight: responsiveWidth(5),
+  },
+
+  title: {
+    fontSize: responsiveFontSize(24),
+    fontWeight: '400',
+    textAlign: 'center',
+    marginBottom: responsiveHeight(3.5),
+    color: '#000',
+    alignSelf: 'center',
+  },
+  inputGroup: {
+    marginBottom: responsiveHeight(0.5),
+  },
+
+  label: {
+    fontSize: responsiveFontSize(14),
+    color: '#767272ff',
+    marginBottom: responsiveHeight(0.5),
+  },
 
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 2,
     paddingHorizontal: responsiveWidth(3),
-    paddingVertical: responsiveHeight(1.5),
+    paddingVertical: responsiveHeight(0.7),
     fontSize: responsiveFontSize(16),
-    marginBottom: responsiveHeight(2),
+    marginBottom: responsiveHeight(1),
     color: '#000',
   },
+  row: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  gap: responsiveWidth(4),
+  marginBottom: responsiveHeight(1.5),
+},
+
+halfInputGroup: {
+  flex: 1,
+},
+
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -52,7 +78,7 @@ title: {
     borderColor: '#ccc',
     borderRadius: 2,
     paddingHorizontal: responsiveWidth(3),
-    marginBottom: responsiveHeight(3),
+    marginBottom: responsiveHeight(2.1),
   },
   passwordInput: {
     flex: 1,
@@ -65,14 +91,15 @@ title: {
   },
   button: {
     backgroundColor: '#000',
-    paddingVertical: responsiveHeight(2),
+    paddingVertical: responsiveHeight(1.2),
     alignItems: 'center',
     borderRadius: 2,
-    marginBottom: responsiveHeight(2.5),
+    marginBottom: responsiveHeight(2),
+    // marginTop: responsiveHeight(-1),
   },
   buttonText: {
     color: '#fff',
-    fontSize: responsiveFontSize(18),
+    fontSize: responsiveFontSize(16),
     letterSpacing: 1,
   },
   loginText: {
@@ -81,7 +108,7 @@ title: {
     fontSize: responsiveFontSize(14),
   },
   loginLink: {
-    color: '#d4aa00', // Yellow-ish
+    color: '#d4aa00',
   },
 });
 

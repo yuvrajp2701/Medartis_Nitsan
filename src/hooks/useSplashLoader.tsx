@@ -6,34 +6,45 @@ const useSplashLoader = (onFinish: () => void) => {
 
   const progressAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const internalProgress = useRef(0); // Track actual progress independently
+
+  const hasFinished = useRef(false); // Prevent multiple finish calls
 
   useEffect(() => {
+    console.log('[SplashLoader] Starting progress interval...');
+    
     const interval = setInterval(() => {
-      setProgress(prev => {
-        const next = prev + 1;
+      internalProgress.current += 1;
+      setProgress(internalProgress.current);
 
-        if (next >= 100) {
-          clearInterval(interval);
+      console.log(`[SplashLoader] Progress: ${internalProgress.current}`);
 
-          // Fade out after reaching 100%
-          Animated.timing(fadeAnim, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: true,
-          }).start(() => onFinish());
+      if (internalProgress.current >= 100 && !hasFinished.current) {
+        console.log('[SplashLoader] Reached 100. Clearing interval and starting fade out...');
+        
+        hasFinished.current = true;
+        clearInterval(interval);
 
-          return 100;
-        }
-
-        return next;
-      });
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }).start(() => {
+          console.log('[SplashLoader] Fade out completed. Calling onFinish...');
+          onFinish();
+        });
+      }
     }, 20);
 
-    return () => clearInterval(interval);
+    return () => {
+      console.log('[SplashLoader] Cleanup: Clearing interval');
+      clearInterval(interval);
+    };
   }, []);
 
   // Animate progress bar
   useEffect(() => {
+    console.log(`[SplashLoader] Animating progress to ${progress}`);
     Animated.timing(progressAnim, {
       toValue: progress,
       duration: 100,

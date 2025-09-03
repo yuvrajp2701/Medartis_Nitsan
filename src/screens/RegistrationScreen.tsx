@@ -10,8 +10,9 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'; 
+import Icon from 'react-native-vector-icons/Ionicons';
 import styles from '../styles/registrationStyles';
+
 
 const RegistrationScreen: React.FC = () => {
   const [fullName, setFullName] = useState('');
@@ -38,69 +39,81 @@ const RegistrationScreen: React.FC = () => {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Logo */}
+      {/* Logo */}
+      <View style={styles.logoContainer}>
         <Text style={styles.logo}>medartis</Text>
+      </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
 
         {/* Title */}
         <Text style={styles.title}>Register</Text>
 
-        {/* Input Fields */}
-        <TextInput
-          style={styles.input}
-          placeholder="Name*"
-          placeholderTextColor="#aaa"
-          value={fullName}
-          onChangeText={setFullName}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail*"
-          placeholderTextColor="#aaa"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Mobile No.*"
-          placeholderTextColor="#aaa"
-          keyboardType="phone-pad"
-          value={phone}
-          onChangeText={setPhone}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Create Password*"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <View style={styles.passwordContainer}>
+        {/* Full Name */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Name*</Text>
           <TextInput
-            style={styles.passwordInput}
-            placeholder="Re-Type Password*"
-            placeholderTextColor="#aaa"
-            secureTextEntry={!showPassword}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
+            style={styles.input}
+            value={fullName}
+            onChangeText={setFullName}
           />
-          <TouchableOpacity
-            style={styles.eyeIcon}
-            onPress={() => setShowPassword(!showPassword)}
-          >
-            <Icon
-              name={showPassword ? 'eye-off' : 'eye'}
-              size={20}
-              color="#888"
-            />
-          </TouchableOpacity>
         </View>
+
+        {/* Email */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>E-mail*</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+
+        {/* Mobile */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Mobile No.*</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="phone-pad"
+            value={phone}
+            onChangeText={setPhone}
+          />
+        </View>
+
+        {/* Password */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Create Password*</Text>
+          <TextInput
+            style={styles.input}
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        {/* Confirm Password */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Re-Type Password*</Text>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              secureTextEntry={!showPassword}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+            <TouchableOpacity
+              style={styles.eyeIcon}
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Icon
+                name={showPassword ? 'eye-off' : 'eye'}
+                size={20}
+                color="#888"
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
 
         {/* Register Button */}
         <TouchableOpacity style={styles.button} onPress={handleRegister}>

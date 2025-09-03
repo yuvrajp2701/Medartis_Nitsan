@@ -12,7 +12,7 @@ export const splashStyles = StyleSheet.create({
   title: {
     color: '#fff',
     fontSize: responsiveFontSize(36),
-    marginBottom: responsiveHeight(3),
+    marginBottom: responsiveHeight(1),
     fontWeight: '400',
     letterSpacing: 1,
     textAlign: 'center',

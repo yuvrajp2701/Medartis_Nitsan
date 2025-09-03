@@ -20,14 +20,14 @@ const SplashScreen: React.FC<SplashProps> = ({ onFinish }) => {
       <StatusBar barStyle="light-content" backgroundColor="#000" />
 
       {/* App Title */}
-      <Text style={splashStyles.title}>Medartis</Text>
+      <Text style={splashStyles.title}>medartis</Text>
 
       {/* Progress Bar */}
       <ProgressBar progressAnim={progressAnim} />
 
       {/* Loading Text */}
       <Text style={splashStyles.loadingText}>
-        Loading resources... {progress}%
+        Getting things ready... {progress}%
       </Text>
     </Animated.View>
   );
