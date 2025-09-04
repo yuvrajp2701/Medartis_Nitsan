@@ -12,10 +12,19 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from '../styles/registrationStyles';
 import { isTablet, responsiveHeight } from '../utils/responsive';
-import Button from '../components/Button'; // ✅ Reusable button
+import Button from '../components/Button';
+import Logo from '../components/Logo';
 import InputField from '../components/InputField';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App'; // import type directly from App.tsx
+import Title from '../components/Title';
+
+type RegistrationScreenProp = NativeStackNavigationProp<RootStackParamList, 'Registration'>;
 
 const RegistrationScreen: React.FC = () => {
+  const navigation = useNavigation<RegistrationScreenProp>();
+
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -27,15 +36,20 @@ const RegistrationScreen: React.FC = () => {
     if (isTablet) {
       console.log('Running on a Tablet!');
     }
+
     if (!fullName || !email || !phone || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill all fields');
       return;
     }
+
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
+
     Alert.alert('Success', `Welcome, ${fullName}!`);
+    // Optionally, navigate to Login after registration
+    // navigation.navigate('Login');
   };
 
   return (
@@ -43,21 +57,15 @@ const RegistrationScreen: React.FC = () => {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      {/* Logo */}
-      <View style={styles.logoContainer}>
-        <Text style={styles.logo}>medartis</Text>
-      </View>
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Title */}
-        <Text style={styles.title}>Register</Text>
+        {/* Logo */}
+        <Logo />
 
-        {/* Full Name */}
-        <InputField
-          label="Name*"
-          value={fullName}
-          onChangeText={setFullName}
-        />
+        {/* Title */}
+        <Title text="Register" />
+
+        {/* Name */}
+        <InputField label="Name*" value={fullName} onChangeText={setFullName} />
 
         {/* Email */}
         <InputField
@@ -78,14 +86,19 @@ const RegistrationScreen: React.FC = () => {
         {/* Password */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Create Password*</Text>
-          <TextInput
-            style={styles.input}
-            secureTextEntry
-            placeholder="************"
-            placeholderTextColor="#99999960"
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              secureTextEntry={!showPassword}
+              placeholder="************"
+              placeholderTextColor="#99999960"
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <Icon name={showPassword ? 'eye-off' : 'eye'} size={20} color="#888" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Confirm Password */}
@@ -100,29 +113,21 @@ const RegistrationScreen: React.FC = () => {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
             />
-            <TouchableOpacity
-              style={styles.eyeIcon}
-              onPress={() => setShowPassword(!showPassword)}
-            >
-              <Icon
-                name={showPassword ? 'eye-off' : 'eye'}
-                size={20}
-                color="#888"
-              />
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <Icon name={showPassword ? 'eye-off' : 'eye'} size={20} color="#888" />
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Register Button (Reusable Component) */}
+        {/* Register Button */}
         <View style={{ marginTop: responsiveHeight(2) }}>
           <Button title="REGISTER" onPress={handleRegister} />
         </View>
 
-
         {/* Login Section */}
-        <View style={styles.loginContainer}>
+        <View style={styles.loginContainer1}>
           <Text style={styles.loginText}>Already Registered?</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
             <Text style={styles.loginLink}> Login</Text>
           </TouchableOpacity>
         </View>

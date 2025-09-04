@@ -13,14 +13,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   logoContainer: {
-    alignItems: 'flex-end',
-    paddingHorizontal: responsiveWidth(5),
+    flexDirection: 'row', // Ensure it's a row container (even if only one child)
+    paddingRight: responsiveWidth(0),
   },
 
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: responsiveWidth(8),
-    paddingTop: responsiveHeight(2),
+    paddingTop: responsiveHeight(0),
+  },
+  LoginscrollContainer: {
+    flexGrow: 1,
+    paddingHorizontal: responsiveWidth(8),
+    // paddingTop: responsiveHeight(0),
   },
 
   logo: {
@@ -28,16 +33,16 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#000',
     fontFamily: 'sans-serif-light',
-    marginBottom: responsiveHeight(8),
-    alignSelf: 'flex-end',
-    paddingRight: responsiveWidth(5),
+    marginBottom: isTablet ? responsiveHeight(10) : responsiveHeight(9),
+    marginLeft: 'auto'
   },
 
-  title: {
+  Logintitle: {
     fontSize: responsiveFontSize(24),
     fontWeight: '400',
     textAlign: 'center',
-    marginBottom: responsiveHeight(3.5),
+    marginBottom: responsiveHeight(2.5),
+    marginTop: isTablet ? responsiveHeight(5) : responsiveHeight(15),
     color: '#000',
     alignSelf: 'center',
   },
@@ -83,7 +88,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     paddingHorizontal: responsiveWidth(3),
     marginBottom: responsiveHeight(2.1),
- paddingVertical: responsiveHeight(0.7),
+    paddingVertical: responsiveHeight(0.7),
   },
   passwordInput: {
     flex: 1,
@@ -109,24 +114,65 @@ const styles = StyleSheet.create({
   //   fontSize: responsiveFontSize(16),
   //   letterSpacing: 1,
   // },
+  loginContainer1: {
+    position: 'absolute',      // Sticks to the bottom
+    bottom: isTablet ? responsiveHeight(3) : responsiveHeight(2), // Distance from bottom
+    left: isTablet ? responsiveWidth(27) : responsiveWidth(6),   // Distance from left
+    flexDirection: 'row',       // Align text and link horizontally
+    alignItems: 'center',
+  },
   loginContainer: {
-  position: 'absolute',      // Sticks to the bottom
-  bottom: responsiveHeight(2), // Distance from bottom
-  left: responsiveWidth(6),   // Distance from left
-  flexDirection: 'row',       // Align text and link horizontally
-  alignItems: 'center',
-},
+    position: 'absolute',      // Sticks to the bottom
+    bottom: isTablet ? responsiveHeight(10) : responsiveHeight(2), // Distance from bottom
+    left: isTablet ? responsiveWidth(26) : responsiveWidth(6),   // Distance from left
+    flexDirection: 'row',       // Align text and link horizontally
+    alignItems: 'center',
+  },
+  loginText: {
+    color: '#888',
+    fontSize: responsiveFontSize(12),
+  },
 
-loginText: {
-  color: '#888',
-  fontSize: responsiveFontSize(12),
-},
+  loginLink: {
+    color: '#d4aa00a0',
+    fontSize: responsiveFontSize(14),
+    fontWeight: '500',
+  },
+  forgotText: {
+    textAlign: isTablet ? 'center' : 'right',
+    color: '#00000093',
+    left: isTablet ? responsiveWidth(45) : responsiveWidth(0),
+    fontSize: responsiveFontSize(13),
+    marginTop: -responsiveHeight(1.9),
+    marginBottom: -responsiveHeight(0.9),
+  },
 
-loginLink: {
-  color: '#d4aa00a0',
-  fontSize: responsiveFontSize(14),
-  fontWeight: '500',
-},
+  registerText: {
+    fontSize: responsiveFontSize(12),
+    color: '#888',
+  },
+
+  registerLink: {
+    fontSize: responsiveFontSize(14),
+    color: '#d4aa00a0',
+    fontWeight: '500',
+  },
+  registerContainer: {
+    position: 'absolute',
+    bottom: responsiveHeight(2),
+    left: responsiveWidth(6),
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  azureContainer: {
+    position: 'absolute',
+    bottom: isTablet ? responsiveHeight(10) : responsiveHeight(2), // Distance from bottom
+    right: isTablet ? responsiveWidth(36) : responsiveWidth(6),  // ⬅️ aligns it to the right
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
 
 });
 

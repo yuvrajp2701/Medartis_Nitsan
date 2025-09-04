@@ -2,79 +2,94 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
+  TextInput,
+  TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  TouchableOpacity,
+  Alert,
 } from 'react-native';
-import {
-  responsiveHeight,
-  responsiveFontSize,
-  isTablet,
-} from '../utils/responsive';
+import Icon from 'react-native-vector-icons/Ionicons';
+import styles from '../styles/registrationStyles';
+import { isTablet, responsiveHeight } from '../utils/responsive';
+import Button from '../components/Button';
+import Logo from '../components/Logo';
+import InputField from '../components/InputField';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App'; // import type directly from App.tsx
+import Title from '../components/Title';
 
-import InputField from '../components/InputField'; // ✅ Reusable Input
-import Button from '../components/Button'; // ✅ Reusable Button
+type RegistrationScreenProp = NativeStackNavigationProp<RootStackParamList, 'Registration'>;
 
-const LoginScreen: React.FC = () => {
+const RegistrationScreen: React.FC = () => {
+  const navigation = useNavigation<RegistrationScreenProp>();
+
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
-    console.log('Email:', email);
-    console.log('Password:', password);
-  };
-
-  const handleForgotPassword = () => {
-    console.log('Forgot Password pressed');
-  };
-
-  const handleRegisterRedirect = () => {
-    console.log('Redirect to Register screen');
+    if (isTablet) {
+      console.log('Running on a Tablet!');
+    }
   };
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* TITLE */}
-        <Text style={styles.title}>LOGIN</Text>
+      <ScrollView contentContainerStyle={styles.LoginscrollContainer}>
+        {/* Logo */}
+        <Logo />
 
-        {/* EMAIL */}
-        <InputField
-          placeholder="Email Address"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
+        {/* Title */}
+        <Text style={styles.Logintitle}>Login</Text>
 
-        {/* PASSWORD */}
-        <InputField
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-
-        {/* FORGOT PASSWORD */}
-        <TouchableOpacity onPress={handleForgotPassword}>
+        {/* Full Name */}
+        <InputField label="EnterUserID" value={fullName} onChangeText={setFullName} />
+        {/* Password */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Enter Password</Text>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              secureTextEntry={!showPassword}
+              placeholder="************"
+              placeholderTextColor="#99999960"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <Icon name={showPassword ? 'eye-off' : 'eye'} size={20} color="#888" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <TouchableOpacity onPress={() => console.log('Forgot Password tapped')}>
           <Text style={styles.forgotText}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        {/* LOGIN BUTTON */}
-        <Button title="LOGIN" onPress={handleLogin} />
+        {/* Login Button */}
+        <View style={{ marginTop: responsiveHeight(2) }}>
+          <Button title="LOGIN" onPress={handleLogin} />
+        </View>
 
-        {/* REGISTER LINK */}
-        <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={handleRegisterRedirect}>
-            <Text style={styles.registerLink}>Register</Text>
+        {/* Register Section */}
+        <View style={styles.loginContainer}>
+          <Text style={styles.loginText}>Create</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Registration')}>
+            <Text style={styles.loginLink}> New Account</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Login with Microsoft Azure */}
+        <View style={styles.azureContainer}>
+          <TouchableOpacity onPress={() => console.log('Login with Microsoft Azure')}>
+            <Text style={styles.loginText}>Login with Microsoft Azure</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -82,44 +97,4 @@ const LoginScreen: React.FC = () => {
   );
 };
 
-export default LoginScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollContainer: {
-    padding: responsiveHeight(2.5),
-    paddingTop: responsiveHeight(8),
-  },
-  title: {
-    fontSize: responsiveFontSize(22),
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: responsiveHeight(5),
-    letterSpacing: 1,
-  },
-  forgotText: {
-    textAlign: 'right',
-    color: '#000',
-    marginTop: responsiveHeight(1.5),
-    marginBottom: responsiveHeight(3),
-    fontSize: responsiveFontSize(14),
-  },
-  registerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: responsiveHeight(4),
-  },
-  registerText: {
-    fontSize: responsiveFontSize(14),
-    color: '#000',
-  },
-  registerLink: {
-    fontSize: responsiveFontSize(14),
-    color: '#000',
-    fontWeight: '700',
-    textDecorationLine: 'underline',
-  },
-});
+export default RegistrationScreen;
