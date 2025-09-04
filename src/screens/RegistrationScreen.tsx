@@ -8,12 +8,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from '../styles/registrationStyles';
-import { isTablet } from '../utils/responsive';
-
+import { isTablet, responsiveHeight } from '../utils/responsive';
+import Button from '../components/Button'; // ✅ Reusable button
+import InputField from '../components/InputField';
 
 const RegistrationScreen: React.FC = () => {
   const [fullName, setFullName] = useState('');
@@ -47,42 +47,33 @@ const RegistrationScreen: React.FC = () => {
       <View style={styles.logoContainer}>
         <Text style={styles.logo}>medartis</Text>
       </View>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
 
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Title */}
         <Text style={styles.title}>Register</Text>
 
         {/* Full Name */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Name*</Text>
-          <TextInput
-            style={styles.input}
-            value={fullName}
-            onChangeText={setFullName}
-          />
-        </View>
+        <InputField
+          label="Name*"
+          value={fullName}
+          onChangeText={setFullName}
+        />
 
         {/* Email */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>E-mail*</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
+        <InputField
+          label="E-mail*"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
 
-        {/* Mobile */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Mobile No.*</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={setPhone}
-          />
-        </View>
+        {/* Mobile Number */}
+        <InputField
+          label="Mobile No.*"
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="phone-pad"
+        />
 
         {/* Password */}
         <View style={styles.inputGroup}>
@@ -90,6 +81,8 @@ const RegistrationScreen: React.FC = () => {
           <TextInput
             style={styles.input}
             secureTextEntry
+            placeholder="************"
+            placeholderTextColor="#99999960"
             value={password}
             onChangeText={setPassword}
           />
@@ -102,6 +95,8 @@ const RegistrationScreen: React.FC = () => {
             <TextInput
               style={styles.passwordInput}
               secureTextEntry={!showPassword}
+              placeholder="************"
+              placeholderTextColor="#99999960"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
             />
@@ -118,18 +113,19 @@ const RegistrationScreen: React.FC = () => {
           </View>
         </View>
 
+        {/* Register Button (Reusable Component) */}
+        <View style={{ marginTop: responsiveHeight(2) }}>
+          <Button title="REGISTER" onPress={handleRegister} />
+        </View>
 
-        {/* Register Button */}
-        <TouchableOpacity style={styles.button} onPress={handleRegister}>
-          <Text style={styles.buttonText}>REGISTER</Text>
-        </TouchableOpacity>
 
-        {/* Login Link */}
-        <TouchableOpacity>
-          <Text style={styles.loginText}>
-            Already Registered? <Text style={styles.loginLink}>Login</Text>
-          </Text>
-        </TouchableOpacity>
+        {/* Login Section */}
+        <View style={styles.loginContainer}>
+          <Text style={styles.loginText}>Already Registered?</Text>
+          <TouchableOpacity>
+            <Text style={styles.loginLink}> Login</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
