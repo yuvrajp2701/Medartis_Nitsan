@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from '../styles/registrationStyles';
+import { isTablet } from '../utils/responsive';
 
 
 const RegistrationScreen: React.FC = () => {
@@ -23,6 +24,9 @@ const RegistrationScreen: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleRegister = () => {
+    if (isTablet) {
+      console.log('Running on a Tablet!');
+    }
     if (!fullName || !email || !phone || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill all fields');
       return;

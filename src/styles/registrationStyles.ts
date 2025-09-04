@@ -4,6 +4,7 @@ import {
   responsiveFontSize,
   responsiveWidth,
   responsiveHeight,
+  isTablet,
 } from '../utils/responsive';
 
 const styles = StyleSheet.create({
@@ -20,6 +21,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: responsiveWidth(5),
     paddingTop: responsiveHeight(2),
+    
   },
 
   logo: {
@@ -42,6 +44,7 @@ const styles = StyleSheet.create({
   },
   inputGroup: {
     marginBottom: responsiveHeight(0.5),
+     width: isTablet ? '60%' : '100%',
   },
 
   label: {
