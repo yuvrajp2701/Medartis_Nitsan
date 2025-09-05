@@ -19,6 +19,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App'; // import type directly from App.tsx
 import Title from '../components/Title';
+import { registerUser } from '../APIs/ApiService';
 
 type RegistrationScreenProp = NativeStackNavigationProp<RootStackParamList, 'Registration'>;
 
@@ -31,26 +32,86 @@ const RegistrationScreen: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = () => {
-    if (isTablet) {
-      console.log('Running on a Tablet!');
-    }
+  const handleRegister = async () => {
+    console.log('Register button pressed');
+    console.log('Input values:', { fullName, email, phone, password, confirmPassword });
 
+    // Basic empty fields check
     if (!fullName || !email || !phone || !password || !confirmPassword) {
+      console.log('Validation failed: Some fields are empty');
       Alert.alert('Error', 'Please fill all fields');
       return;
     }
 
+    // Full name validation
+    if (fullName.trim().length < 3) {
+      console.log('Validation failed: Full name too short');
+      Alert.alert('Error', 'Full name must be at least 3 characters');
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      console.log('Validation failed: Invalid email format');
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
+
+    // Phone validation (digits only, 10 digits)
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone)) {
+      console.log('Validation failed: Invalid phone number');
+      Alert.alert('Error', 'Please enter a valid 10-digit phone number');
+      return;
+    }
+
+    // Password length validation
+    if (password.length < 6) {
+      console.log('Validation failed: Password too short');
+      Alert.alert('Error', 'Password must be at least 6 characters long');
+      return;
+    }
+
+    // Password match validation
     if (password !== confirmPassword) {
+      console.log('Validation failed: Passwords do not match');
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
-    Alert.alert('Success', `Welcome, ${fullName}!`);
-    // Optionally, navigate to Login after registration
-    // navigation.navigate('Login');
+    try {
+      console.log('Calling registerUser API...');
+      setLoading(true);
+
+      const result = await registerUser({
+        fullName,
+        email,
+        phone,
+        password,
+      });
+
+      setLoading(false);
+      console.log('API response:', result);
+
+      if (result.success) {
+        console.log('Registration successful');
+        Alert.alert('Success', result.message || `Welcome, ${fullName}!`);
+        navigation.navigate('Login'); // Redirect to login
+      } else {
+        console.log('Registration failed:', result.message);
+        Alert.alert('Error', result.message || 'Registration failed');
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Registration API error:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again later.');
+    }
   };
+
+
 
   return (
     <KeyboardAvoidingView

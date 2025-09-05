@@ -19,24 +19,55 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App'; // import type directly from App.tsx
 import Title from '../components/Title';
+import { loginUser } from '../APIs/ApiService';
 
 type RegistrationScreenProp = NativeStackNavigationProp<RootStackParamList, 'Registration'>;
 
 const RegistrationScreen: React.FC = () => {
   const navigation = useNavigation<RegistrationScreenProp>();
 
-  const [fullName, setFullName] = useState('');
+const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (isTablet) {
-      console.log('Running on a Tablet!');
+const handleLogin = async () => {
+  console.log('Login button pressed');
+  console.log('Input values:', { username, password });
+
+  // Basic empty fields check
+  if (!username || !password) {
+    Alert.alert('Error', 'Please enter both username and password');
+    return;
+  }
+
+  try {
+    console.log('Calling loginUser API...');
+    setLoading(true);
+
+    const result = await loginUser({ username, password });
+
+    setLoading(false);
+    console.log('API response:', result);
+
+    if (result.success) {
+      Alert.alert('Success', result.message || 'Welcome back!');
+      console.log('Login successful, navigating to next screen...');
+      // navigation.navigate('Home'); // Uncomment and adjust if you have a Home screen
+    } else {
+      Alert.alert('Login Failed', result.message || 'Invalid credentials');
     }
-  };
+  } catch (error) {
+    setLoading(false);
+    console.error('Login API error:', error);
+    Alert.alert('Error', 'Something went wrong. Please try again later.');
+  }
+};
+
+
 
   return (
     <KeyboardAvoidingView
@@ -50,8 +81,8 @@ const RegistrationScreen: React.FC = () => {
         {/* Title */}
         <Text style={styles.Logintitle}>Login</Text>
 
-        {/* Full Name */}
-        <InputField label="EnterUserID" value={fullName} onChangeText={setFullName} />
+        {/* User ID */}
+        <InputField label="Enter User ID" value={username} onChangeText={setUsername} />
         {/* Password */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Enter Password</Text>
@@ -61,8 +92,8 @@ const RegistrationScreen: React.FC = () => {
               secureTextEntry={!showPassword}
               placeholder="************"
               placeholderTextColor="#99999960"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
+              value={password}
+              onChangeText={setPassword}
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
               <Icon name={showPassword ? 'eye-off' : 'eye'} size={20} color="#888" />
@@ -98,3 +129,4 @@ const RegistrationScreen: React.FC = () => {
 };
 
 export default RegistrationScreen;
+
