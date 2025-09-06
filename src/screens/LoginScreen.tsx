@@ -21,12 +21,12 @@ import { RootStackParamList } from '../../App'; // import type directly from App
 import Title from '../components/Title';
 import { loginUser } from '../APIs/ApiService';
 
-type RegistrationScreenProp = NativeStackNavigationProp<RootStackParamList, 'Registration'>;
+type LoginScreenProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
-const RegistrationScreen: React.FC = () => {
-  const navigation = useNavigation<RegistrationScreenProp>();
+const LoginScreen: React.FC = () => {
+  const navigation = useNavigation<LoginScreenProp>();
 
-const [username, setUsername] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -34,38 +34,38 @@ const [username, setUsername] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-const handleLogin = async () => {
-  console.log('Login button pressed');
-  console.log('Input values:', { username, password });
+  const handleLogin = async () => {
+    console.log('Login button pressed');
+    console.log('Input values:', { username, password });
 
-  // Basic empty fields check
-  if (!username || !password) {
-    Alert.alert('Error', 'Please enter both username and password');
-    return;
-  }
-
-  try {
-    console.log('Calling loginUser API...');
-    setLoading(true);
-
-    const result = await loginUser({ username, password });
-
-    setLoading(false);
-    console.log('API response:', result);
-
-    if (result.success) {
-      Alert.alert('Success', result.message || 'Welcome back!');
-      console.log('Login successful, navigating to next screen...');
-      // navigation.navigate('Home'); // Uncomment and adjust if you have a Home screen
-    } else {
-      Alert.alert('Login Failed', result.message || 'Invalid credentials');
+    // Basic empty fields check
+    if (!username || !password) {
+      Alert.alert('Error', 'Please enter both username and password');
+      return;
     }
-  } catch (error) {
-    setLoading(false);
-    console.error('Login API error:', error);
-    Alert.alert('Error', 'Something went wrong. Please try again later.');
-  }
-};
+
+    try {
+      console.log('Calling loginUser API...');
+      setLoading(true);
+
+      const result = await loginUser({ username, password });
+
+      setLoading(false);
+      console.log('API response:', result);
+
+      if (result.success) {
+        Alert.alert('Success', result.message || 'Welcome back!');
+        console.log('Login successful, navigating to next screen...');
+        // navigation.navigate('Home'); // Uncomment and adjust if you have a Home screen
+      } else {
+        Alert.alert('Login Failed', result.message || 'Invalid credentials');
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Login API error:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again later.');
+    }
+  };
 
 
 
@@ -100,7 +100,7 @@ const handleLogin = async () => {
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity onPress={() => console.log('Forgot Password tapped')}>
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
           <Text style={styles.forgotText}>Forgot Password?</Text>
         </TouchableOpacity>
 
@@ -128,5 +128,5 @@ const handleLogin = async () => {
   );
 };
 
-export default RegistrationScreen;
+export default LoginScreen;
 

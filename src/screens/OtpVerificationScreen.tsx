@@ -12,6 +12,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from '../styles/otpStyles';
 import Button from '../components/Button';
+import OtpInputBoxes from '../components/OtpInputBoxes';
 
 const OtpVerificationScreen: React.FC = () => {
   const [otp, setOtp] = useState(['', '', '', '']); // 4 digits OTP
@@ -59,20 +60,8 @@ const OtpVerificationScreen: React.FC = () => {
         </Text>
 
         {/* OTP Inputs */}
-        <View style={styles.otpContainer}>
-          {otp.map((digit, index) => (
-            <TextInput
-              key={index}
-            //   ref={(ref) => (inputs.current[index] = ref)} // Assign ref to inputs
-              style={styles.otpInput}
-              keyboardType="numeric"
-              maxLength={1}
-              value={digit}
-              onChangeText={(text) => handleChange(text, index)}
-              autoFocus={index === 0} // Focus on first input by default
-            />
-          ))}
-        </View>
+        <OtpInputBoxes code={otp} setCode={setOtp} numberOfDigits={4} />
+
 
         {/* Resend OTP */}
         <TouchableOpacity onPress={handleResend}>

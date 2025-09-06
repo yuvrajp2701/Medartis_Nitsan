@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
-import { responsiveFontSize, responsiveHeight } from '../utils/responsive';
+import { isTablet, responsiveFontSize, responsiveHeight } from '../utils/responsive';
 
 interface TitleProps {
   text: string;
@@ -12,7 +12,7 @@ const Title: React.FC<TitleProps> = ({ text }) => {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: responsiveFontSize(24),
+    fontSize: isTablet ? responsiveFontSize(20) : responsiveFontSize(24),
     fontWeight: '400',
     textAlign: 'center',
     marginBottom: responsiveHeight(3.5),

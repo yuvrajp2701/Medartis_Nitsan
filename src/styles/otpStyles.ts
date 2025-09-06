@@ -1,61 +1,60 @@
-import { StyleSheet, Dimensions } from 'react-native';
-
-const { width, height } = Dimensions.get('window');
-
-const isTablet = width > 600; // Check if the device is a tablet
+import { StyleSheet } from 'react-native';
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+} from '../utils/responsive';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f6f6f6',
-    padding: 20,
+    backgroundColor: '#fff',
   },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: responsiveWidth(5),
   },
   title: {
-    fontSize: isTablet ? 30 : 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
+    fontSize: responsiveFontSize(22),
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: responsiveHeight(2),
   },
   subtitle: {
-    fontSize: isTablet ? 18 : 16,
-    color: '#777',
+    fontSize: responsiveFontSize(16),
+    color: '#666',
     textAlign: 'center',
-    marginBottom: 40,
-    paddingHorizontal: 20,
+    marginBottom: responsiveHeight(3),
   },
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: isTablet ? '50%' : '70%',
-    marginBottom: 30,
+    width: '80%',
+    marginBottom: responsiveHeight(3),
   },
   otpInput: {
-    width: isTablet ? 60 : 50,
-    height: isTablet ? 60 : 50,
-    borderWidth: 2,
-    borderRadius: 10,
-    textAlign: 'center',
-    fontSize: isTablet ? 28 : 24,
+    width: responsiveWidth(15),
+    height: responsiveWidth(15),
+    borderWidth: 1,
     borderColor: '#ccc',
-    backgroundColor: '#fff',
-    marginHorizontal: 5,
+    borderRadius: responsiveWidth(2),
+    textAlign: 'center',
+    fontSize: responsiveFontSize(18),
+    color: '#000',
+    backgroundColor: '#f9f9f9',
   },
   resendText: {
-    fontSize: isTablet ? 16 : 14,
-    color: '#0066cc',
-    marginTop: 20,
-    textDecorationLine: 'underline',
+    fontSize: responsiveFontSize(14),
+    color: '#E6B400',
+    textAlign: 'center',
+    marginBottom: responsiveHeight(2),
   },
   buttonWrapper: {
-    marginTop: 40,
-    width: isTablet ? '100%' : '70%',
+    width: '100%',
+    alignItems: 'center',
+    marginTop: responsiveHeight(2),
   },
 });
 
