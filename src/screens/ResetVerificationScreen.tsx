@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -9,6 +9,7 @@ import {
     Image,
     TextInput,
     ScrollView,
+    Alert
 } from 'react-native';
 import OtpInputBoxes from '../components/OtpInputBoxes';
 import styles from '../styles/resetVerificationStyles';
@@ -33,12 +34,41 @@ type NavigationProp = NativeStackNavigationProp<
 const ResetVerificationScreen: React.FC = () => {
     const navigation = useNavigation<NavigationProp>();
     const [code, setCode] = useState(['', '', '', '']);
+    // const [code, setCode] = useState(['', '', '', '']);
+    const [timer, setTimer] = useState(30); // 30 seconds timer
+
 
     const handleCodeChange = (text: string, index: number) => {
         const newCode = [...code];
         newCode[index] = text.slice(-1);
         setCode(newCode);
+    };// Timer countdown logic
+useEffect(() => {
+    let countdown: number | undefined;
+
+    if (timer > 0) {
+        countdown = setInterval(() => {
+            setTimer(prev => prev - 1); // decrease timer by 1 each second
+        }, 1000);
+    }
+
+    // Cleanup when component unmounts or timer changes
+    return () => {
+        if (countdown) clearInterval(countdown);
     };
+}, [timer]);
+
+// Resend OTP handler
+const handleResend = () => {
+    if (timer === 0) {
+        setTimer(30); // restart the timer
+       Alert.alert('OTP Resent!', 'A new OTP has been sent to your email or phone.');
+        // TODO: Call your resend OTP API here
+    }
+};
+
+// Format seconds into MM:SS format
+const formattedTime = `00:${timer < 10 ? `0${timer}` : timer}`;
 
     return (
         <KeyboardAvoidingView
@@ -100,11 +130,18 @@ const ResetVerificationScreen: React.FC = () => {
                                 <Text style={styles.resendText}>
                                     Didn't receive the code?
                                 </Text>
-                                <Text style={styles.resendLink}>
-                                    {' '}
-                                    Resend (00:58)
-                                </Text>
+
+                                {timer > 0 ? (
+                                    <Text style={styles.resendLink}> Resend ({formattedTime})</Text>
+                                ) : (
+                                    <TouchableOpacity onPress={handleResend}>
+                                        <Text style={[styles.resendLink, { color: '#007BFF' }]}>
+                                            Resend Now
+                                        </Text>
+                                    </TouchableOpacity>
+                                )}
                             </View>
+
 
                             <View style={styles.curvedContainer}>
                                 <Button
@@ -131,3 +168,4 @@ const ResetVerificationScreen: React.FC = () => {
 };
 
 export default ResetVerificationScreen;
+
