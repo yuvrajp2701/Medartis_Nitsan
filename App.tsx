@@ -19,7 +19,7 @@ export type RootStackParamList = {
   OtpVerification: undefined;
   ForgotPassword: undefined;
   ResetVerification: { email: string };
-  ResetPassword: undefined;
+  ResetPassword: { email: string };  
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -53,8 +53,8 @@ const App = () => {
               <Stack.Screen name="Registration" component={RegistrationScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-              <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
               <Stack.Screen name="ResetVerification" component={ResetVerificationScreen} />
+              <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
               <Stack.Screen name="OtpVerification" component={OtpVerificationScreen} />
 
             </>

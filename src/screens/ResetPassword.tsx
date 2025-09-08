@@ -11,62 +11,80 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from '../styles/registrationStyles';
-import { isTablet, responsiveHeight } from '../utils/responsive';
+import { responsiveHeight } from '../utils/responsive';
 import Button from '../components/Button';
 import Logo from '../components/Logo';
-import InputField from '../components/InputField';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../App'; // import type directly from App.tsx
-import Title from '../components/Title';
-import { loginUser } from '../APIs/ApiService';
+import { RootStackParamList } from '../../App';
+import { resetPassword } from '../APIs/ApiService';
 
-type ResetPasswordScreenProp = NativeStackNavigationProp<RootStackParamList, 'ResetPassword'>;
+type ResetPasswordScreenProp = NativeStackNavigationProp<
+    RootStackParamList,
+    'ResetPassword'
+>;
 
 const ResetPasswordScreen: React.FC = () => {
     const navigation = useNavigation<ResetPasswordScreenProp>();
+    const route = useRoute();
+    const { email } = route.params as { email: string };
 
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const handleReset = async () => {
-        console.log('Reset button pressed');
-        console.log('Input values:', { password, newPassword });
+        console.log('🔧 Reset Password Triggered');
 
-        // Basic empty fields check
-        if (!password || !newPassword) {
-            Alert.alert('Error', 'Please enter both password and new password');
+        if (!password || !confirmPassword) {
+            console.warn('⚠️ One or both password fields are empty');
+            Alert.alert('Error', 'Please fill in all password fields.');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            console.warn('⚠️ Passwords do not match');
+            Alert.alert('Error', 'Passwords do not match.');
+            return;
+        }
+
+        if (password.length < 6) {
+            console.warn('⚠️ Password too short');
+            Alert.alert('Error', 'Password must be at least 6 characters long.');
             return;
         }
 
         try {
-            console.log('Calling resetPassword API...');
+            console.log('📡 Calling API with:', {
+                email,
+                newPassword: password,
+            });
+
             setLoading(true);
 
-            const result = await resetPassword({ password, newPassword });
+            const result = await resetPassword({
+                email,
+                newPassword: password,
+            });
 
             setLoading(false);
-            console.log('API response:', result);
+            console.log('✅ API Response:', result);
 
-            if (result.success) {
-                Alert.alert('Success', result.message || 'Welcome back!');
-                console.log('Login successful, navigating to next screen...');
-                navigation.navigate('Login'); 
+            if (result.status === true) {
+                console.log('🎉 Password reset successful');
+                Alert.alert('Success', result.message || 'Password reset successful!');
+                navigation.navigate('Login');
             } else {
-                Alert.alert('Login Failed', result.message || 'Invalid credentials');
+                console.warn('❌ Reset failed with message:', result.message);
+                Alert.alert('Reset Failed', result.message || 'Could not reset password.');
             }
         } catch (error) {
             setLoading(false);
-            console.error('Login API error:', error);
-            Alert.alert('Error', 'Something went wrong. Please try again later.');
+            console.error('🔥 API Error:', error);
+            Alert.alert('Error', 'Something went wrong. Please try again.');
         }
     };
-
 
 
     return (
@@ -75,28 +93,25 @@ const ResetPasswordScreen: React.FC = () => {
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
             <ScrollView contentContainerStyle={styles.LoginscrollContainer}>
-                {/* Logo */}
                 <Logo />
-
-                {/* Title */}
                 <Text style={styles.Logintitle}>Reset Your Password</Text>
 
-                {/* User ID */}
+                {/* New Password Field */}
                 <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Enter New Password</Text>
+                    <View style={styles.passwordContainer}>
+                        <TextInput
+                            style={styles.passwordInput}
+                            secureTextEntry={!showPassword}
+                            placeholder="************"
+                            placeholderTextColor="#99999960"
+                            value={password}
+                            onChangeText={setPassword}
+                        />
+                    </View>
+                </View>
 
-                <Text style={styles.label}>Enter New Password</Text>
-                <View style={styles.passwordContainer}>
-                    <TextInput
-                        style={styles.passwordInput}
-                        secureTextEntry={!showPassword}
-                        placeholder="************"
-                        placeholderTextColor="#99999960"
-                        value={password}
-                        onChangeText={setPassword}
-                    />
-                </View>
-                </View>
-                {/* Password */}
+                {/* Confirm Password Field */}
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>Re-Type New Password</Text>
                     <View style={styles.passwordContainer}>
@@ -105,24 +120,21 @@ const ResetPasswordScreen: React.FC = () => {
                             secureTextEntry={!showPassword}
                             placeholder="************"
                             placeholderTextColor="#99999960"
-                            value={newPassword}
-                            onChangeText={setNewPassword}
+                            value={confirmPassword}
+                            onChangeText={setConfirmPassword}
                         />
                         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                             <Icon name={showPassword ? 'eye-off' : 'eye'} size={20} color="#888" />
                         </TouchableOpacity>
                     </View>
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-                    <Text style={styles.forgotText}>Forgot Password?</Text>
-                </TouchableOpacity>
 
-                {/* Login Button */}
+                {/* Reset Button */}
                 <View style={{ marginTop: responsiveHeight(2) }}>
-                    <Button title="Reset" onPress={handleReset} />
+                    <Button title={loading ? 'Resetting...' : 'Reset'} onPress={handleReset} />
                 </View>
 
-                {/* Register Section */}
+                {/* Navigation Links */}
                 <View style={styles.loginContainer}>
                     <Text style={styles.loginText}>Create</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Registration')}>
@@ -130,7 +142,6 @@ const ResetPasswordScreen: React.FC = () => {
                     </TouchableOpacity>
                 </View>
 
-                {/* Login with Microsoft Azure */}
                 <View style={styles.azureContainer}>
                     <TouchableOpacity onPress={() => console.log('Login with Microsoft Azure')}>
                         <Text style={styles.loginText}>Login with Microsoft Azure</Text>
@@ -142,4 +153,3 @@ const ResetPasswordScreen: React.FC = () => {
 };
 
 export default ResetPasswordScreen;
-

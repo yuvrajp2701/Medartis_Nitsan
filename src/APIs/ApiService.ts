@@ -59,3 +59,91 @@ export const loginUser = async (credentials: {
     throw error;
   }
 };
+
+
+// Forgot Password API
+export const forgotPassword = async (email: string) => {
+  try {
+    console.log('Sending forgot password request with email:', email);
+
+    const formData = new FormData();
+    formData.append('email', email);
+
+    const response = await fetch('https://medartis-app.thebetaspace.com/api/v1/forgot-pass-code', {
+      method: 'POST',
+      headers: {
+        'app-key': 'yrWN6aKdDdTeTTSwdyXw2L8UOmfc5rxP', // API Key
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('Forgot Password API response:', data);
+    return data;
+  } catch (error) {
+    console.error('Forgot Password API error:', error);
+    throw error;
+  }
+};
+
+// Send Forgot Password API with email and auth_code
+export const verifyOtp = async (email: string, authCode: string) => {
+  try {
+    console.log('Sending forgot password request with email and auth_code:', email, authCode);
+
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('auth_code', authCode);  // Include the auth code
+
+    const response = await fetch('https://medartis-app.thebetaspace.com/api/v1/forgot-pass', {
+      method: 'POST',
+      headers: {
+        'app-key': 'yrWN6aKdDdTeTTSwdyXw2L8UOmfc5rxP', // API Key
+      },
+      body: formData,
+    });
+
+    // Check if the response is successful
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.statusText}`);
+    }
+
+    // Parse the response body as JSON
+    const data = await response.json();
+    console.log('Forgot Password API response:', data);
+    return data;
+  } catch (error) {
+    console.error('Forgot Password API error:', error);
+    throw error; // Re-throwing the error for the caller to handle
+  }
+};
+
+// Reset Password API
+export const resetPassword = async ({
+  email,
+  newPassword,
+}: {
+  email: string;
+  newPassword: string;
+}) => {
+  try {
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('new-pass', newPassword); // key must match API exactly
+
+    const response = await fetch('https://medartis-app.thebetaspace.com/api/v1/update-forgot-pass', {
+      method: 'POST',
+      headers: {
+        'app-key': 'yrWN6aKdDdTeTTSwdyXw2L8UOmfc5rxP', // ✅ Add your API key here
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('Reset Password API response:', data);
+    return data;
+  } catch (error) {
+    console.error('Reset Password API error:', error);
+    throw error;
+  }
+};

@@ -7,18 +7,17 @@ import {
     Platform,
     ImageBackground,
     Image,
-    TextInput,
     ScrollView,
     Alert
 } from 'react-native';
 import OtpInputBoxes from '../components/OtpInputBoxes';
 import styles from '../styles/resetVerificationStyles';
-import Title from '../components/Title';
 import Button from '../components/Button';
 import ForgotPassword from '../assets/ForgotPassword.png';
 import RecoverPassword from '../assets/RecoverPassword.png';
+import { forgotPassword, verifyOtp } from '../APIs/ApiService';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import {
@@ -26,49 +25,84 @@ import {
     responsiveWidth,
 } from '../utils/responsive';
 
-type NavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    'ResetVerification'
->;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'ResetVerification'>;
+type RouteParams = RouteProp<RootStackParamList, 'ResetVerification'>;
 
 const ResetVerificationScreen: React.FC = () => {
     const navigation = useNavigation<NavigationProp>();
+    const route = useRoute<RouteParams>();
+    const { email } = route.params; // ✅ Dynamic email from route
+
     const [code, setCode] = useState(['', '', '', '']);
-    // const [code, setCode] = useState(['', '', '', '']);
     const [timer, setTimer] = useState(30); // 30 seconds timer
 
+    // ✅ Handle OTP submission
+    const handleSubmit = () => {
+        const authCode = code.join('');
+
+        if (authCode.length === 4) {
+            console.log('Verifying OTP for:', email, 'Code:', authCode);
+            verifyOtp(email, authCode)
+                .then(response => {
+                    console.log('OTP verification response:', response);
+                    if (response.status === true) {
+                        navigation.navigate('ResetPassword', { email }); // ✅ pass email to next screen
+                    } else {
+                        Alert.alert('Verification Failed', response.message || 'Please check your OTP and try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('OTP verification error:', error);
+                    Alert.alert('Verification Failed', 'An error occurred while verifying OTP.');
+                });
+        } else {
+            Alert.alert('Invalid OTP', 'Please enter a valid 4-digit OTP.');
+        }
+    };
 
     const handleCodeChange = (text: string, index: number) => {
         const newCode = [...code];
         newCode[index] = text.slice(-1);
         setCode(newCode);
-    };// Timer countdown logic
-useEffect(() => {
-    let countdown: number | undefined;
-
-    if (timer > 0) {
-        countdown = setInterval(() => {
-            setTimer(prev => prev - 1); // decrease timer by 1 each second
-        }, 1000);
-    }
-
-    // Cleanup when component unmounts or timer changes
-    return () => {
-        if (countdown) clearInterval(countdown);
     };
-}, [timer]);
 
-// Resend OTP handler
-const handleResend = () => {
-    if (timer === 0) {
-        setTimer(30); // restart the timer
-       Alert.alert('OTP Resent!', 'A new OTP has been sent to your email or phone.');
-        // TODO: Call your resend OTP API here
+    // ⏱ Timer countdown logic
+    useEffect(() => {
+        let countdown: number | undefined;
+
+        if (timer > 0) {
+            countdown = setInterval(() => {
+                setTimer(prev => prev - 1);
+            }, 1000);
+        }
+
+        return () => {
+            if (countdown) clearInterval(countdown);
+        };
+    }, [timer]);
+
+const handleResend = async () => {
+  if (timer === 0) {
+    setTimer(30); // reset your timer
+
+    try {
+      console.log('🔄 Resending OTP for:', email);
+      const result = await forgotPassword(email);
+
+      if (result.status === true) {
+        Alert.alert('OTP Resent!', `A new OTP has been sent to ${email}.`);
+      } else {
+        Alert.alert('Resend Failed', result.message || 'Failed to resend OTP.');
+      }
+    } catch (error) {
+      console.error('❌ Resend OTP Error:', error);
+      Alert.alert('Error', 'Could not resend OTP. Please try again.');
     }
+  }
 };
 
-// Format seconds into MM:SS format
-const formattedTime = `00:${timer < 10 ? `0${timer}` : timer}`;
+    // 🕒 Format timer
+    const formattedTime = `00:${timer < 10 ? `0${timer}` : timer}`;
 
     return (
         <KeyboardAvoidingView
@@ -103,7 +137,6 @@ const formattedTime = `00:${timer < 10 ? `0${timer}` : timer}`;
                                 />
                             </View>
 
-                            {/* Title in two lines */}
                             <View
                                 style={{
                                     alignSelf: 'flex-start',
@@ -117,15 +150,15 @@ const formattedTime = `00:${timer < 10 ? `0${timer}` : timer}`;
 
                             <Text style={styles.subtitle}>
                                 Please enter the 4-digit code sent to{'\n'}
-                                <Text style={styles.emailText}>vivek.nitsan@gmail.com</Text> to reset your
-                                password
+                                <Text style={styles.emailText}>{email}</Text> to reset your password
                             </Text>
 
-                            {/* 4-Digit Code Input Boxes */}
-                            <OtpInputBoxes code={code} setCode={setCode} numberOfDigits={4} />
+                            <OtpInputBoxes
+                                code={code}
+                                setCode={setCode}
+                                numberOfDigits={4}
+                            />
 
-
-                            {/* Resend timer */}
                             <View style={styles.resendContainer}>
                                 <Text style={styles.resendText}>
                                     Didn't receive the code?
@@ -142,15 +175,10 @@ const formattedTime = `00:${timer < 10 ? `0${timer}` : timer}`;
                                 )}
                             </View>
 
-
                             <View style={styles.curvedContainer}>
-                                <Button
-                                    title="Verify"
-                                    onPress={() => navigation.navigate('ResetPassword')}
-                                />
+                                <Button title="Verify" onPress={handleSubmit} />
                             </View>
 
-                            {/* Help link */}
                             <View style={styles.helpContainer}>
                                 <Text style={styles.helpText}>
                                     Having trouble logging in?
@@ -168,4 +196,3 @@ const formattedTime = `00:${timer < 10 ? `0${timer}` : timer}`;
 };
 
 export default ResetVerificationScreen;
-
