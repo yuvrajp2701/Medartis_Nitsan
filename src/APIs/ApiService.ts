@@ -147,3 +147,26 @@ export const resetPassword = async ({
     throw error;
   }
 };
+
+
+// Get Videos API
+export const getVideos = async () => {
+  try {
+    console.log('Fetching video list...');
+
+    const response = await fetch('https://medartis-app.thebetaspace.com/api/v1/list-videos', {
+      method: 'GET',
+      headers: {
+        'app-key': 'yrWN6aKdDdTeTTSwdyXw2L8UOmfc5rxP', // API Key
+      },
+    });
+
+    const data = await response.json();
+    console.log('Get Videos API response:', data);
+
+    return data?.files || [];
+  } catch (error) {
+    console.error('Get Videos API error:', error);
+    throw error;
+  }
+};

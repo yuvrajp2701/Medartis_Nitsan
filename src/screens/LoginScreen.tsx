@@ -53,13 +53,12 @@ const LoginScreen: React.FC = () => {
       setLoading(false);
       console.log('API response:', result);
 
-      if (result.success) {
-        Alert.alert('Success', result.message || 'Welcome back!');
-        console.log('Login successful, navigating to next screen...');
-        // navigation.navigate('Home'); // Uncomment and adjust if you have a Home screen
+      if (result.status) {
+        navigation.navigate('Home');
       } else {
         Alert.alert('Login Failed', result.message || 'Invalid credentials');
       }
+
     } catch (error) {
       setLoading(false);
       console.error('Login API error:', error);
