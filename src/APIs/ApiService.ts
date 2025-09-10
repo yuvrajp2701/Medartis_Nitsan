@@ -170,3 +170,26 @@ export const getVideos = async () => {
     throw error;
   }
 };
+
+// Fetch Account Details API
+export const fetchAccountDetails = async (username: string) => {
+  try {
+    const formData = new FormData();
+    formData.append('username', username);
+
+    const response = await fetch('https://medartis-app.thebetaspace.com/api/v1/account', {
+      method: 'POST',
+      headers: {
+        'app-key': 'yrWN6aKdDdTeTTSwdyXw2L8UOmfc5rxP',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('Account Details API response:', data);
+    return data?.user || null;
+  } catch (error) {
+    console.error('Account Details API error:', error);
+    throw error;
+  }
+};

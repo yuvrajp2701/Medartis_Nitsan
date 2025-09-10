@@ -13,6 +13,7 @@ import ResetVerificationScreen from './src/screens/ResetVerificationScreen';
 import ResetPasswordScreen from './src/screens/ResetPassword';
 import HomeScreen from './src/screens/HomeScreen';
 import AppDrawer from './src/navigation/AppDrawer';
+import VideoGalleryScreen from './src/screens/VideoGalleryScreen';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -23,6 +24,7 @@ export type RootStackParamList = {
   ResetVerification: { email: string };
   ResetPassword: { email: string };
   Home: undefined;
+  VideoGallery: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -53,10 +55,11 @@ const App = () => {
             </Stack.Screen>
           ) : (
             <>
-              <Stack.Screen name="Home" component={AppDrawer} />
 
+              <Stack.Screen name="VideoGallery" component={VideoGalleryScreen} />
               <Stack.Screen name="Registration" component={RegistrationScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Home" component={AppDrawer} />
               <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
               <Stack.Screen name="ResetVerification" component={ResetVerificationScreen} />
               <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />

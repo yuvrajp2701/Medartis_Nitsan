@@ -11,15 +11,15 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styles from '../styles/registrationStyles';
-import { isTablet, responsiveHeight } from '../utils/responsive';
+import { responsiveHeight } from '../utils/responsive';
 import Button from '../components/Button';
 import Logo from '../components/Logo';
 import InputField from '../components/InputField';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App'; // import type directly from App.tsx
-import Title from '../components/Title';
 import { loginUser } from '../APIs/ApiService';
+import AsyncStorage from '@react-native-async-storage/async-storage';  // Import AsyncStorage
 
 type LoginScreenProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -27,10 +27,7 @@ const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenProp>();
 
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -54,7 +51,11 @@ const LoginScreen: React.FC = () => {
       console.log('API response:', result);
 
       if (result.status) {
-        navigation.navigate('Home');
+        // Store username in AsyncStorage after successful login
+        await AsyncStorage.setItem('username', username);
+
+        // On successful login, pass the username to the Home screen
+        navigation.navigate('Home', { username });
       } else {
         Alert.alert('Login Failed', result.message || 'Invalid credentials');
       }
@@ -65,8 +66,6 @@ const LoginScreen: React.FC = () => {
       Alert.alert('Error', 'Something went wrong. Please try again later.');
     }
   };
-
-
 
   return (
     <KeyboardAvoidingView
@@ -82,6 +81,7 @@ const LoginScreen: React.FC = () => {
 
         {/* User ID */}
         <InputField label="Enter User ID" value={username} onChangeText={setUsername} />
+        
         {/* Password */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Enter Password</Text>
@@ -99,6 +99,7 @@ const LoginScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
         </View>
+        
         <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
           <Text style={styles.forgotText}>Forgot Password?</Text>
         </TouchableOpacity>
@@ -128,4 +129,3 @@ const LoginScreen: React.FC = () => {
 };
 
 export default LoginScreen;
-

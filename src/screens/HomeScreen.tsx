@@ -17,6 +17,7 @@ import BottomNavBar from '../components/BottomNavBar';
 import DocumentsSection from '../components/DocumentsSection';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
@@ -36,12 +37,29 @@ const HomeScreen: React.FC = () => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('Home');
+     const [username, setUsername] = useState<string | null>(null);
 
     const handleTabPress = (tab: string) => {
         console.log(`Switched to tab: ${tab}`);
         setActiveTab(tab);
     };
+ useEffect(() => {
+    const fetchUsername = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem('username');
+        if (storedUsername) {
+          console.log('Retrieved username from AsyncStorage:', storedUsername);
+          setUsername(storedUsername);
+        } else {
+          console.log('No username found in AsyncStorage');
+        }
+      } catch (error) {
+        console.error('Error retrieving username:', error);
+      }
+    };
 
+    fetchUsername();
+  }, []);
     const fetchVideos = async () => {
         try {
             const response = await fetch('https://medartis-app.thebetaspace.com/api/v1/list-videos', {
@@ -160,7 +178,7 @@ const HomeScreen: React.FC = () => {
 
             {/* Carousel for Videos */}
             {loading ? (
-                <ActivityIndicator size="large" color="#000" style={{ marginTop: 20 }} />
+                <ActivityIndicator size="large" color="#000" style={{ marginTop: 80 }} />
             ) : (
                 <>
                     <FlatList
