@@ -14,23 +14,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   videoSizeBadge: {
-  position: 'absolute',
-  bottom: 6,
-  right: 12,
-  backgroundColor: '#000',
-  paddingHorizontal: 6,
-  paddingVertical: 2,
-  borderRadius: 4,
-  opacity: 0.8,
-},
+    position: 'absolute',
+    bottom: 6,
+    right: 12,
+    backgroundColor: '#000',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    opacity: 0.8,
+  },
 
-videoSizeText: {
-  color: '#fff',
-  fontSize: 10,
-  fontWeight: '500',
-},
+  videoSizeText: {
+    color: '#fff',
+    fontSize: isTablet ? 15 : 10,
+    fontWeight: '500',
+  },
 
-    titleWithArrow: {
+  titleWithArrow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -44,15 +44,15 @@ videoSizeText: {
     color: '#fff',
     fontWeight: 'bold',
   },
-    topRight: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-  
-    iconSpacing: {
-      marginLeft: isTablet ? 30 : 16,
-      color: '#fff',
-    },
+  topRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  iconSpacing: {
+    marginLeft: isTablet ? 30 : 16,
+    color: '#fff',
+  },
   titleContainer: {
     padding: 16,
     backgroundColor: '#fff',
@@ -114,18 +114,18 @@ videoSizeText: {
     alignItems: 'center',
   },
   thumbnail: {
-    width: 120,
-    height: 80,
+    width: isTablet ? 250 : 120,
+    height: isTablet ? 140 : 80,
     borderRadius: 8,
     marginRight: 12,
   },
   videoTitle: {
-    fontSize: 14,
+    fontSize: isTablet ? 19 : 14,
     fontWeight: '600',
     color: '#000',
   },
   videoDetails: {
-  fontSize: 12,
+    fontSize: isTablet ? 14 : 12,
     color: '#666',
     marginTop: 4,
   },
@@ -135,23 +135,23 @@ videoSizeText: {
     alignItems: 'center',
   },
   actionButtons: {
-  flexDirection: 'row',
-  gap: 10,
-  justifyContent: 'center',
-},
+    flexDirection: 'row',
+    gap: 10,
+    justifyContent: 'center',
+  },
 
-iconButton: {
+  iconButton: {
     padding: 7,
     borderRadius: 20,
-},
+  },
 
-heartButton: {
-  backgroundColor: '#E7C363', // Yellow like in the image
-},
+  heartButton: {
+    backgroundColor: '#E7C363', // Yellow like in the image
+  },
 
-downloadButton: {
-  backgroundColor: '#EDEDED', // Light gray like in the image
-},
+  downloadButton: {
+    backgroundColor: '#EDEDED', // Light gray like in the image
+  },
 
 });
 

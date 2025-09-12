@@ -85,63 +85,67 @@ const VideoGalleryScreen: React.FC = () => {
         return 'https://via.placeholder.com/320x180.png?text=Video';
     };
 
-const renderVideoItem = ({ item }: { item: VideoItem }) => {
-    // Convert videoSize to MB
-    const formatVideoSize = (sizeInBytes: number) => {
-        if (!sizeInBytes) return "0 MB";
-        return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
-    };
+    const renderVideoItem = ({ item }: { item: VideoItem }) => {
+        // Convert videoSize to MB
+        const formatVideoSize = (sizeInBytes: number) => {
+            if (!sizeInBytes) return "0 MB";
+            return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
+        };
 
-    return (
-        <TouchableOpacity
-            style={styles.videoItem}
-            onPress={() => console.log('Clicked:', item.title)}
-        >
-            <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+        return (
+            <TouchableOpacity
+                style={styles.videoItem}
+                onPress={() => {
+                    console.log('Navigating with Video UID:', item.uid); // ✅ Check UID here
+                    navigation.navigate('VideoDetail', { videoId: item.uid });
+                          console.log('item is hereee', item)
+                }}
+            >
+                <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
 
-                {/* LEFT SIDE: Thumbnail + Buttons */}
-                <View style={{ alignItems: 'center' }}>
-                    <View style={{ position: 'relative' }}>
-                        {/* Thumbnail */}
-                        <Image source={{ uri: getThumbnailUrl(item) }} style={styles.thumbnail} />
+                    {/* LEFT SIDE: Thumbnail + Buttons */}
+                    <View style={{ alignItems: 'center' }}>
+                        <View style={{ position: 'relative' }}>
+                            {/* Thumbnail */}
+                            <Image source={{ uri: getThumbnailUrl(item) }} style={styles.thumbnail} />
 
-                        {/* Video Size Badge */}
-                        <View style={styles.videoSizeBadge}>
-                            <Text style={styles.videoSizeText}>
-                                {formatVideoSize(item.videoSize)}
-                            </Text>
+                            {/* Video Size Badge */}
+                            <View style={styles.videoSizeBadge}>
+                                <Text style={styles.videoSizeText}>
+                                    {formatVideoSize(item.videoSize)}
+                                </Text>
+                            </View>
+                        </View>
+
+                        {/* Buttons BELOW Thumbnail */}
+                        <View style={[styles.actionButtons, { marginTop: 8 }]}>
+                            <TouchableOpacity style={[styles.iconButton, styles.heartButton]}>
+                                <Icon name="heart" size={isTablet ? 22 : 19} color="#fff" />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.iconButton, styles.downloadButton]}>
+                                <Icon name="download-outline" size={isTablet ? 22 : 20} color="#000" />
+                            </TouchableOpacity>
                         </View>
                     </View>
 
-                    {/* Buttons BELOW Thumbnail */}
-                    <View style={[styles.actionButtons, { marginTop: 8 }]}>
-                        <TouchableOpacity style={[styles.iconButton, styles.heartButton]}>
-                            <Icon name="heart" size={19} color="#fff" />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.iconButton, styles.downloadButton]}>
-                            <Icon name="download-outline" size={20} color="#000" />
-                        </TouchableOpacity>
+                    {/* RIGHT SIDE: Title + Date */}
+                    <View style={{ flex: 1, marginLeft: isTablet ? 22 : 12, justifyContent: 'center' }}>
+                        <Text
+                            style={styles.videoTitle}
+                            numberOfLines={2}
+                            ellipsizeMode="tail"
+                        >
+                            {item.title}
+                        </Text>
+
+                        <Text style={styles.videoDetails}>
+                            Published: {formatDate(item.creation_date)}
+                        </Text>
                     </View>
                 </View>
-
-                {/* RIGHT SIDE: Title + Date */}
-                <View style={{ flex: 1, marginLeft: 12, justifyContent: 'center' }}>
-                    <Text
-                        style={styles.videoTitle}
-                        numberOfLines={2}
-                        ellipsizeMode="tail"
-                    >
-                        {item.title}
-                    </Text>
-
-                    <Text style={styles.videoDetails}>
-                        Published: {formatDate(item.creation_date)}
-                    </Text>
-                </View>
-            </View>
-        </TouchableOpacity>
-    );
-};
+            </TouchableOpacity>
+        );
+    };
 
 
 

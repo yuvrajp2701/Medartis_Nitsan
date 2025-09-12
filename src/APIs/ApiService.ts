@@ -193,3 +193,16 @@ export const fetchAccountDetails = async (username: string) => {
     throw error;
   }
 };
+// // Fetch Video by ID API
+// export const getVideoById = async (videoId: number) => {
+//   try {
+//     const response = await fetch(`https://your-api-url.com/api/videos/${videoId}`);
+//     if (!response.ok) {
+//       throw new Error('Failed to fetch video');
+//     }
+//     const data = await response.json();
+//     return data;
+//   } catch (err) {
+//     throw err;
+//   }
+// };
