@@ -37,29 +37,29 @@ const HomeScreen: React.FC = () => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('Home');
-     const [username, setUsername] = useState<string | null>(null);
+    const [username, setUsername] = useState<string | null>(null);
 
     const handleTabPress = (tab: string) => {
         console.log(`Switched to tab: ${tab}`);
         setActiveTab(tab);
     };
- useEffect(() => {
-    const fetchUsername = async () => {
-      try {
-        const storedUsername = await AsyncStorage.getItem('username');
-        if (storedUsername) {
-          console.log('Retrieved username from AsyncStorage:', storedUsername);
-          setUsername(storedUsername);
-        } else {
-          console.log('No username found in AsyncStorage');
-        }
-      } catch (error) {
-        console.error('Error retrieving username:', error);
-      }
-    };
+    useEffect(() => {
+        const fetchUsername = async () => {
+            try {
+                const storedUsername = await AsyncStorage.getItem('username');
+                if (storedUsername) {
+                    console.log('Retrieved username from AsyncStorage:', storedUsername);
+                    setUsername(storedUsername);
+                } else {
+                    console.log('No username found in AsyncStorage');
+                }
+            } catch (error) {
+                console.error('Error retrieving username:', error);
+            }
+        };
 
-    fetchUsername();
-  }, []);
+        fetchUsername();
+    }, []);
     const fetchVideos = async () => {
         try {
             const response = await fetch('https://medartis-app.thebetaspace.com/api/v1/list-videos', {
@@ -120,7 +120,14 @@ const HomeScreen: React.FC = () => {
 
                 <View style={styles.topRight}>
                     <Icon name="notifications-outline" size={22} color="#fff" style={styles.iconSpacing} />
-                    <Icon name="heart-outline" size={22} color="#fff" style={styles.iconSpacing} />
+                    <TouchableOpacity onPress={() => navigation.navigate('Favorite')}>
+                        <Icon
+                            name="heart-outline"
+                            size={24}
+                            color="#fff"
+                            style={styles.iconSpacing}
+                        />
+                    </TouchableOpacity>
                 </View>
                 <Text style={styles.brand}>medartis</Text>
             </View>

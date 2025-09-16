@@ -21,7 +21,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ activeTab, onTabPress }) =>
     { key: 'VideoGallery', label: 'VideoGallery', icon: 'play-circle-outline', activeIcon: 'play-circle' },
     { key: 'Search', label: 'Search', icon: 'search-outline', activeIcon: 'search' },
     { key: 'Documents', label: 'Documents', icon: 'document-text-outline', activeIcon: 'document-text' },
-    { key: 'Downloads', label: 'Downloads', icon: 'cloud-download-outline', activeIcon: 'cloud-download' },
+    { key: 'Download', label: 'Download', icon: 'cloud-download-outline', activeIcon: 'cloud-download' },
   ];
 
   // Handle navigation for tab presses
@@ -39,8 +39,8 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ activeTab, onTabPress }) =>
       case 'Documents':
         navigation.navigate('VideoGallery');
         break;
-      case 'Downloads':
-        navigation.navigate('VideoGallery');
+      case 'Download':
+        navigation.navigate('Download');
         break;
     }
     onTabPress(tabKey);  // Update active tab state in parent component

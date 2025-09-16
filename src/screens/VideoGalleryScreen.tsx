@@ -98,7 +98,7 @@ const VideoGalleryScreen: React.FC = () => {
                 onPress={() => {
                     console.log('Navigating with Video UID:', item.uid); // ✅ Check UID here
                     navigation.navigate('VideoDetail', { videoId: item.uid });
-                          console.log('item is hereee', item)
+                    console.log('item is hereee', item)
                 }}
             >
                 <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
@@ -170,7 +170,14 @@ const VideoGalleryScreen: React.FC = () => {
                 </TouchableOpacity>
 
                 <View style={styles.topRight}>
-                    <Icon name="heart-outline" size={isTablet ? 30 : 22} color="#fff" style={styles.iconSpacing} />
+                    <TouchableOpacity onPress={() => navigation.navigate('Favorite')}>
+                        <Icon
+                            name="heart-outline"
+                            size={24}
+                            color="#fff"
+                            style={styles.iconSpacing}
+                        />
+                    </TouchableOpacity>
                     <Icon name="notifications-outline" size={isTablet ? 30 : 22} color="#fff" style={styles.iconSpacing} />
                     <Icon name="filter-outline" size={isTablet ? 30 : 22} color="#fff" style={styles.iconSpacing} />
 
