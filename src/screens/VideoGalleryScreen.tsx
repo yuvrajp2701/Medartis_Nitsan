@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import BottomNavBar from '../components/BottomNavBar';
 import { getVideos } from '../APIs/ApiService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import styles from '../styles/videoGalleryStyles'; // Your provided styles
+import styles from '../styles/videoGalleryStyles';
 import { isTablet } from '../utils/responsive';
 import { useNavigation } from '@react-navigation/native';
 
@@ -24,6 +24,7 @@ interface VideoItem {
     youtubeId: string;
     vimeoId: string;
     creation_date: number;
+    videoSize?: number;
 }
 
 const VideoGalleryScreen: React.FC = () => {
@@ -38,27 +39,106 @@ const VideoGalleryScreen: React.FC = () => {
     const [selectedContentType, setSelectedContentType] = useState('Type of Content');
     const [selectedLanguage, setSelectedLanguage] = useState('Language');
 
-    // Fetch username from AsyncStorage
+    // Favorite tracking
+    const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
+
+    /**
+     * Toggle favorite video in AsyncStorage
+     */
+    const toggleFavorite = async (video: VideoItem) => {
+        console.log('Toggling favorite for video UID:', video.uid);
+        try {
+            const existingFavorites = await AsyncStorage.getItem('favorites');
+            const favorites = existingFavorites ? JSON.parse(existingFavorites) : [];
+
+            // Check if video already exists in favorites
+            const isAlreadyFavorite = favorites.some((fav: VideoItem) => fav.uid === video.uid);
+            console.log('Already Favorite?', isAlreadyFavorite);
+
+            let updatedFavorites;
+            if (isAlreadyFavorite) {
+                console.log('Removing from favorites:', video.title);
+                updatedFavorites = favorites.filter((fav: VideoItem) => fav.uid !== video.uid);
+            } else {
+                console.log('Adding to favorites:', video.title);
+                updatedFavorites = [...favorites, video];
+            }
+
+            await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+            console.log('Favorites updated successfully in AsyncStorage.');
+        } catch (error) {
+            console.error('Error updating favorites ❌:', error);
+        }
+    };
+
+    /**
+     * Load favorites when component mounts
+     */
+    useEffect(() => {
+        const loadFavorites = async () => {
+            try {
+                const storedFavorites = await AsyncStorage.getItem('favorites');
+                console.log('Loaded favorites from AsyncStorage:', storedFavorites);
+                if (storedFavorites) {
+                    const parsedFavorites = JSON.parse(storedFavorites);
+                    setFavoriteIds(parsedFavorites.map((fav: VideoItem) => fav.uid));
+                }
+            } catch (error) {
+                console.error('Error loading favorites ❌:', error);
+            }
+        };
+
+        loadFavorites();
+    }, []);
+
+    /**
+     * Handle heart icon click
+     */
+    const handleFavoritePress = async (video: VideoItem) => {
+        console.log('Heart icon pressed for UID:', video.uid);
+        await toggleFavorite(video);
+
+        setFavoriteIds((prev) => {
+            if (prev.includes(video.uid)) {
+                console.log('Removed UID from local favoriteIds:', video.uid);
+                return prev.filter((id) => id !== video.uid);
+            } else {
+                console.log('Added UID to local favoriteIds:', video.uid);
+                return [...prev, video.uid];
+            }
+        });
+    };
+
+    /**
+     * Fetch username from AsyncStorage
+     */
     useEffect(() => {
         const fetchUsername = async () => {
             try {
                 const storedUsername = await AsyncStorage.getItem('username');
-                if (storedUsername) setUsername(storedUsername);
+                if (storedUsername) {
+                    console.log('Fetched username from storage:', storedUsername);
+                    setUsername(storedUsername);
+                }
             } catch (error) {
-                console.error('Error retrieving username:', error);
+                console.error('Error retrieving username ❌:', error);
             }
         };
         fetchUsername();
     }, []);
 
-    // Fetch videos from API
+    /**
+     * Fetch videos from API
+     */
     const fetchVideoData = async () => {
+        console.log('Fetching video data from API...');
         setLoading(true);
         try {
             const videoData = await getVideos();
+            console.log('Videos fetched successfully:', videoData);
             setVideos(videoData);
         } catch (error) {
-            console.error('Error fetching videos:', error);
+            console.error('Error fetching videos ❌:', error);
         } finally {
             setLoading(false);
         }
@@ -67,6 +147,10 @@ const VideoGalleryScreen: React.FC = () => {
     useEffect(() => {
         fetchVideoData();
     }, []);
+
+    /**
+     * Format timestamp into readable date
+     */
     const formatDate = (timestamp: number) => {
         const date = new Date(timestamp * 1000); // Convert seconds → milliseconds
         return date.toLocaleDateString('en-GB', {
@@ -76,6 +160,9 @@ const VideoGalleryScreen: React.FC = () => {
         });
     };
 
+    /**
+     * Get Thumbnail URL
+     */
     const getThumbnailUrl = (item: VideoItem) => {
         if (item.youtubeId) {
             return `https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg`;
@@ -85,10 +172,12 @@ const VideoGalleryScreen: React.FC = () => {
         return 'https://via.placeholder.com/320x180.png?text=Video';
     };
 
+    /**
+     * Render each video card
+     */
     const renderVideoItem = ({ item }: { item: VideoItem }) => {
-        // Convert videoSize to MB
         const formatVideoSize = (sizeInBytes: number) => {
-            if (!sizeInBytes) return "0 MB";
+            if (!sizeInBytes) return '0 MB';
             return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
         };
 
@@ -96,31 +185,35 @@ const VideoGalleryScreen: React.FC = () => {
             <TouchableOpacity
                 style={styles.videoItem}
                 onPress={() => {
-                    console.log('Navigating with Video UID:', item.uid); // ✅ Check UID here
+                    console.log('Navigating to VideoDetail with UID:', item.uid);
                     navigation.navigate('VideoDetail', { videoId: item.uid });
-                    console.log('item is hereee', item)
                 }}
             >
                 <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-
                     {/* LEFT SIDE: Thumbnail + Buttons */}
                     <View style={{ alignItems: 'center' }}>
                         <View style={{ position: 'relative' }}>
-                            {/* Thumbnail */}
                             <Image source={{ uri: getThumbnailUrl(item) }} style={styles.thumbnail} />
 
                             {/* Video Size Badge */}
                             <View style={styles.videoSizeBadge}>
                                 <Text style={styles.videoSizeText}>
-                                    {formatVideoSize(item.videoSize)}
+                                    {formatVideoSize(item.videoSize || 0)}
                                 </Text>
                             </View>
                         </View>
 
                         {/* Buttons BELOW Thumbnail */}
                         <View style={[styles.actionButtons, { marginTop: 8 }]}>
-                            <TouchableOpacity style={[styles.iconButton, styles.heartButton]}>
-                                <Icon name="heart" size={isTablet ? 22 : 19} color="#fff" />
+                            <TouchableOpacity
+                                style={[styles.iconButton, styles.heartButton]}
+                                onPress={() => handleFavoritePress(item)}
+                            >
+                                <Icon
+                                    name="heart"
+                                    size={isTablet ? 22 : 19}
+                                    color={favoriteIds.includes(item.uid) ? '#FFD700' : '#fff'}
+                                />
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.iconButton, styles.downloadButton]}>
                                 <Icon name="download-outline" size={isTablet ? 22 : 20} color="#000" />
@@ -130,14 +223,9 @@ const VideoGalleryScreen: React.FC = () => {
 
                     {/* RIGHT SIDE: Title + Date */}
                     <View style={{ flex: 1, marginLeft: isTablet ? 22 : 12, justifyContent: 'center' }}>
-                        <Text
-                            style={styles.videoTitle}
-                            numberOfLines={2}
-                            ellipsizeMode="tail"
-                        >
+                        <Text style={styles.videoTitle} numberOfLines={2} ellipsizeMode="tail">
                             {item.title}
                         </Text>
-
                         <Text style={styles.videoDetails}>
                             Published: {formatDate(item.creation_date)}
                         </Text>
@@ -147,9 +235,11 @@ const VideoGalleryScreen: React.FC = () => {
         );
     };
 
-
-
+    /**
+     * Loader when fetching videos
+     */
     if (loading) {
+        console.log('Loading videos, showing loader...');
         return (
             <View style={styles.loaderContainer}>
                 <ActivityIndicator size="large" color="#0000ff" />
@@ -162,7 +252,10 @@ const VideoGalleryScreen: React.FC = () => {
             {/* Top Bar */}
             <View style={styles.topBar}>
                 <TouchableOpacity
-                    onPress={() => navigation.goBack()}
+                    onPress={() => {
+                        console.log('Back button pressed');
+                        navigation.goBack();
+                    }}
                     style={styles.titleWithArrow}
                 >
                     <Icon name="arrow-back" size={24} color="#fff" style={styles.backArrow} />
@@ -170,7 +263,12 @@ const VideoGalleryScreen: React.FC = () => {
                 </TouchableOpacity>
 
                 <View style={styles.topRight}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Favorite')}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            console.log('Navigating to Favorite screen');
+                            navigation.navigate('Favorite');
+                        }}
+                    >
                         <Icon
                             name="heart-outline"
                             size={24}
@@ -180,106 +278,42 @@ const VideoGalleryScreen: React.FC = () => {
                     </TouchableOpacity>
                     <Icon name="notifications-outline" size={isTablet ? 30 : 22} color="#fff" style={styles.iconSpacing} />
                     <Icon name="filter-outline" size={isTablet ? 30 : 22} color="#fff" style={styles.iconSpacing} />
-
                 </View>
             </View>
-            {/* Two-Column Filter Layout */}
-            <View
-                style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    paddingHorizontal: 16,
-                    marginTop: 16,
-                }}
-            >
+
+            {/* Filters */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, marginTop: 16 }}>
                 <TouchableOpacity
-                    style={{
-                        flex: 1,
-                        backgroundColor: '#fff',
-                        borderRadius: 8,
-                        padding: 12,
-                        marginRight: 8,
-                        elevation: 2,
-                        alignItems: 'center',
-                        flexDirection: 'row', // To align the text and icon horizontally
-                        justifyContent: 'space-between',
-                    }}
+                    style={styles.filterBox}
                     onPress={() => console.log('Area of Interest selected')}
                 >
-                    <Text style={{ fontSize: 16, color: '#333', fontWeight: '500' }}>
-                        {selectedArea}
-                    </Text>
+                    <Text style={styles.filterText}>{selectedArea}</Text>
                     <Icon name="chevron-down" size={20} color="#333" />
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={{
-                        flex: 1,
-                        backgroundColor: '#fff',
-                        borderRadius: 8,
-                        padding: 12,
-                        marginLeft: 8,
-                        elevation: 2,
-                        alignItems: 'center',
-                        flexDirection: 'row', // To align the text and icon horizontally
-                        justifyContent: 'space-between',
-                    }}
+                    style={styles.filterBox}
                     onPress={() => console.log('Products selected')}
                 >
-                    <Text style={{ fontSize: 16, color: '#333', fontWeight: '500' }}>
-                        {selectedProduct}
-                    </Text>
+                    <Text style={styles.filterText}>{selectedProduct}</Text>
                     <Icon name="chevron-down" size={20} color="#333" />
                 </TouchableOpacity>
             </View>
 
-            <View
-                style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    paddingHorizontal: 16,
-                    marginTop: 12,
-                }}
-            >
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, marginTop: 12 }}>
                 <TouchableOpacity
-                    style={{
-                        flex: 1,
-                        backgroundColor: '#fff',
-                        borderRadius: 8,
-                        padding: 12,
-                        marginRight: 8,
-                        elevation: 2,
-                        alignItems: 'center',
-                        flexDirection: 'row', // To align the text and icon horizontally
-                        justifyContent: 'space-between',
-                        marginBottom: 16,
-                    }}
+                    style={styles.filterBox}
                     onPress={() => console.log('Type of Content selected')}
                 >
-                    <Text style={{ fontSize: 16, color: '#333', fontWeight: '500' }}>
-                        {selectedContentType}
-                    </Text>
+                    <Text style={styles.filterText}>{selectedContentType}</Text>
                     <Icon name="chevron-down" size={20} color="#333" />
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={{
-                        flex: 1,
-                        backgroundColor: '#fff',
-                        borderRadius: 8,
-                        padding: 12,
-                        marginLeft: 8,
-                        elevation: 2,
-                        alignItems: 'center',
-                        flexDirection: 'row', // To align the text and icon horizontally
-                        justifyContent: 'space-between',
-                        marginBottom: 16,
-                    }}
+                    style={styles.filterBox}
                     onPress={() => console.log('Language selected')}
                 >
-                    <Text style={{ fontSize: 16, color: '#333', fontWeight: '500' }}>
-                        {selectedLanguage}
-                    </Text>
+                    <Text style={styles.filterText}>{selectedLanguage}</Text>
                     <Icon name="chevron-down" size={20} color="#333" />
                 </TouchableOpacity>
             </View>
@@ -293,7 +327,7 @@ const VideoGalleryScreen: React.FC = () => {
             />
 
             {/* Bottom Navigation Bar */}
-            <BottomNavBar activeTab="Videos" onTabPress={() => { }} />
+            <BottomNavBar activeTab="Videos" onTabPress={() => { console.log('BottomNavBar tab pressed'); }} />
         </View>
     );
 };

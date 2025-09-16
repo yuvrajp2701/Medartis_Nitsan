@@ -82,6 +82,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+   filterBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#f5f5f5', // light gray background
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  filterText: {
+    fontSize: 14,
+    color: '#e8e8e8ff',
+    fontWeight: '500',
+  },
   dropdownOptions: {
     backgroundColor: '#fff',
     borderRadius: 8,
