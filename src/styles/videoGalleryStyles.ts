@@ -6,6 +6,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
+  filterRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  paddingHorizontal: 16,
+  marginTop: 12,
+},
+
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -29,6 +37,20 @@ const styles = StyleSheet.create({
     fontSize: isTablet ? 15 : 10,
     fontWeight: '500',
   },
+noDataContainer: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#fff', // White background
+  padding: 20,
+},
+
+noDataText: {
+  fontSize: 16,
+  color: '#555', // Subtle gray text
+  fontWeight: '500',
+  textAlign: 'center',
+},
 
   titleWithArrow: {
     flexDirection: 'row',

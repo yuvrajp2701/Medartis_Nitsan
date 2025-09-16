@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { isTablet } from '../utils/responsive';
@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 type VideoActionsProps = {
   videoUrl: string;
   videoTitle: string;
-  onBookmark?: () => void;
+  videoData: any; // Full video object
   onShare?: () => void;
 };
 
@@ -18,54 +18,87 @@ const actions = [
   { name: 'share-social-outline', label: 'Share', key: 'share' },
 ];
 
-const VideoActions: React.FC<VideoActionsProps> = ({
-  videoUrl,
-  videoTitle,
-  onBookmark,
-  onShare,
-}) => {
+const VideoActions: React.FC<VideoActionsProps> = ({ videoUrl, videoTitle, videoData, onShare }) => {
   const [downloading, setDownloading] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
-const handleDownload = async () => {
-  if (!videoUrl) {
-    Alert.alert('Error', 'No video URL provided.');
-    return;
-  }
+  // ✅ Check bookmark status when component mounts
+  useEffect(() => {
+    const loadBookmarkStatus = async () => {
+      try {
+        const favs = await AsyncStorage.getItem('favorites');
+        const favoriteList = favs ? JSON.parse(favs) : [];
+        const exists = favoriteList.some((item: any) => item.uid === videoData?.uid);
+        setIsBookmarked(exists);
+      } catch (err) {
+        console.error('Error loading bookmark status:', err);
+      }
+    };
+    if (videoData?.uid) loadBookmarkStatus();
+  }, [videoData]);
 
-  try {
-    setDownloading(true);
-    const filename = `${videoTitle.replace(/\s+/g, '_').toLowerCase()}.mp4`;
-    const localPath = await downloadVideo(videoUrl, filename);
+  // ✅ Toggle bookmark
+  const handleBookmark = async () => {
+    try {
+      const favs = await AsyncStorage.getItem('favorites');
+      const favoriteList = favs ? JSON.parse(favs) : [];
 
-    if (localPath) {
-      Alert.alert('Success', 'Video downloaded successfully!');
-      console.log('File saved at:', localPath);
-
-      // ✅ Save metadata to AsyncStorage
-      const stored = await AsyncStorage.getItem('downloadedVideos');
-      const downloadedVideos = stored ? JSON.parse(stored) : [];
-
-      // Add the new video
-      downloadedVideos.push({
-        name: videoTitle,
-        path: localPath,
-        size: 0, // Optional: You can use RNFS.stat to get size
-      });
-
-      await AsyncStorage.setItem('downloadedVideos', JSON.stringify(downloadedVideos));
-    } else {
-      Alert.alert('Failed', 'Video download failed.');
+      if (isBookmarked) {
+        // Remove from favorites
+        const updated = favoriteList.filter((item: any) => item.uid !== videoData.uid);
+        await AsyncStorage.setItem('favorites', JSON.stringify(updated));
+        setIsBookmarked(false);
+        Alert.alert('Removed', 'Video removed from bookmarks');
+      } else {
+        // Add to favorites
+        const updated = [...favoriteList, videoData];
+        await AsyncStorage.setItem('favorites', JSON.stringify(updated));
+        setIsBookmarked(true);
+        Alert.alert('Added', 'Video added to bookmarks');
+      }
+    } catch (error) {
+      console.error('Error updating favorites:', error);
+      Alert.alert('Error', 'Could not update bookmarks');
     }
-  } catch (error) {
-    console.error(error);
-    Alert.alert('Error', 'Something went wrong while downloading the video.');
-  } finally {
-    setDownloading(false);
-  }
-};
+  };
 
+  // ✅ Handle download
+  const handleDownload = async () => {
+    if (!videoUrl) {
+      Alert.alert('Error', 'No video URL provided.');
+      return;
+    }
 
-  // ✅ JSX must be returned
+    try {
+      setDownloading(true);
+      const filename = `${videoTitle.replace(/\s+/g, '_').toLowerCase()}.mp4`;
+      const localPath = await downloadVideo(videoUrl, filename);
+
+      if (localPath) {
+        Alert.alert('Success', 'Video downloaded successfully!');
+        console.log('File saved at:', localPath);
+
+        const stored = await AsyncStorage.getItem('downloadedVideos');
+        const downloadedVideos = stored ? JSON.parse(stored) : [];
+
+        downloadedVideos.push({
+          name: videoTitle,
+          path: localPath,
+          size: 0,
+        });
+
+        await AsyncStorage.setItem('downloadedVideos', JSON.stringify(downloadedVideos));
+      } else {
+        Alert.alert('Failed', 'Video download failed.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Something went wrong while downloading the video.');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {actions.map((action) => (
@@ -74,19 +107,23 @@ const handleDownload = async () => {
           style={styles.button}
           onPress={() => {
             if (action.key === 'download') handleDownload();
-            else if (action.key === 'bookmark' && onBookmark) onBookmark();
+            else if (action.key === 'bookmark') handleBookmark();
             else if (action.key === 'share' && onShare) onShare();
           }}
           disabled={downloading && action.key === 'download'}
         >
           <Icon
             name={
-              action.key === 'download' && downloading
+              action.key === 'bookmark'
+                ? isBookmarked
+                  ? 'heart'
+                  : 'heart-outline'
+                : action.key === 'download' && downloading
                 ? 'cloud-download-outline'
                 : action.name
             }
             size={18}
-            color="#666"
+            color={action.key === 'bookmark' && isBookmarked ? '#FFD700' : '#666'}
           />
           <Text style={styles.label}>
             {action.key === 'download' && downloading ? 'Downloading...' : action.label}

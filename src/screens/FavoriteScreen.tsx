@@ -1,123 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { View, FlatList, ActivityIndicator, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import styles from '../styles/videoGalleryStyles';
 
-interface VideoItem {
-  uid: number;
-  title: string;
-  filetype_video: string;
-  videoPath: string;
-  visible: number;
-  youtubeId: string;
-  vimeoId: string;
-  creation_date: number;
-}
+import VideoCard, { VideoItem } from '../components/VideoCard';
+import VideoHeader from '../components/VideoHeader';
+import BottomNavBar from '../components/BottomNavBar';
+import styles from '../styles/videoGalleryStyles';
+import VideoCardList from '../components/VideoCardList';
 
 const FavoriteScreen: React.FC = () => {
   const [favorites, setFavorites] = useState<VideoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    console.log('FavoriteScreen mounted ✅');
-
-    const fetchFavorites = async () => {
-      console.log('Fetching favorites from AsyncStorage...');
-      try {
-        const storedFavorites = await AsyncStorage.getItem('favorites');
-        console.log('Raw favorites from storage:', storedFavorites);
-
-        if (storedFavorites) {
-          const parsedFavorites = JSON.parse(storedFavorites);
-          console.log('Parsed favorites:', parsedFavorites);
-          setFavorites(parsedFavorites);
-        } else {
-          console.log('No favorites found in AsyncStorage.');
-          setFavorites([]);
-        }
-      } catch (error) {
-        console.error('Error loading favorites ❌:', error);
-      } finally {
-        setLoading(false);
-        console.log('Favorites fetching complete.');
+  const fetchFavorites = async () => {
+    try {
+      const storedFavorites = await AsyncStorage.getItem('favorites');
+      if (storedFavorites) {
+        setFavorites(JSON.parse(storedFavorites));
+      } else {
+        setFavorites([]);
       }
-    };
+    } catch (error) {
+      console.error('Error loading favorites ❌:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Fetch whenever screen is focused
+  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      console.log('FavoriteScreen is focused, refreshing favorites...');
       fetchFavorites();
     });
-
     return unsubscribe;
   }, [navigation]);
 
-  const getThumbnailUrl = (item: VideoItem) => {
-    if (item.youtubeId) {
-      return `https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg`;
-    } else if (item.vimeoId) {
-      return 'https://via.placeholder.com/320x180.png?text=Vimeo+Video';
-    }
-    return 'https://via.placeholder.com/320x180.png?text=Video';
-  };
-
-  const renderFavoriteItem = ({ item }: { item: VideoItem }) => {
-    console.log('Rendering favorite video:', item.title, 'UID:', item.uid);
-
-    return (
-      <TouchableOpacity
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          padding: 10,
-          backgroundColor: '#fff',
-          borderRadius: 8,
-          marginBottom: 10,
-          elevation: 2,
-        }}
-        onPress={() => {
-          console.log('Navigating to VideoDetail for video UID:', item.uid);
-          navigation.navigate('VideoDetail', { videoId: item.uid });
-        }}
-      >
-        {/* Thumbnail */}
-        <Image
-          source={{ uri: getThumbnailUrl(item) }}
-          style={{ width: 100, height: 60, borderRadius: 8 }}
-        />
-        <View style={{ marginLeft: 10, flex: 1 }}>
-          <Text style={{ color: '#000', fontSize: 16, fontWeight: '600' }}>
-            {item.title}
-          </Text>
-          <Text style={{ color: '#666', fontSize: 12, marginTop: 4 }}>
-            UID: {item.uid} | {item.filetype_video}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  const renderItem = ({ item }: { item: VideoItem }) => (
+    <VideoCardList
+      video={item}
+      onPress={(videoId) => navigation.navigate('VideoDetail', { videoId })}
+    />
+  );
 
   if (loading) {
-    console.log('Loading favorites, showing ActivityIndicator...');
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#fff',
-        }}
-      >
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#FFD700" />
       </View>
     );
@@ -126,50 +54,13 @@ const FavoriteScreen: React.FC = () => {
   return (
     <View style={{ flex: 1, backgroundColor: '#fff', padding: 10 }}>
       {/* Header */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginBottom: 10,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            console.log('Back button pressed, navigating back...');
-            navigation.goBack();
-          }}
-        >
-          <Icon name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text
-          style={{
-            color: '#000',
-            fontSize: 20,
-            fontWeight: 'bold',
-            marginLeft: 10,
-          }}
-        >
-          Favorites
-        </Text>
-      </View>
+      <VideoHeader title="Favorites" onBack={() => navigation.goBack()} />
 
-      {/* No Favorites Case */}
+      {/* No favorites */}
       {favorites.length === 0 ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ color: '#000', fontSize: 16 }}>No favorites yet!</Text>
-          <Text
-            style={{
-              color: '#888',
-              fontSize: 12,
-              marginTop: 5,
-            }}
-          >
+          <Text style={{ color: '#888', fontSize: 12, marginTop: 5 }}>
             Add videos to favorites by tapping the heart icon ❤️
           </Text>
         </View>
@@ -177,10 +68,14 @@ const FavoriteScreen: React.FC = () => {
         <FlatList
           data={favorites}
           keyExtractor={(item) => item.uid.toString()}
-          renderItem={renderFavoriteItem}
+          renderItem={renderItem}
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 80 }}
         />
       )}
+
+      {/* Bottom Nav */}
+      <BottomNavBar activeTab="Videos" onTabPress={(tab) => console.log('Tab pressed', tab)} />
     </View>
   );
 };
