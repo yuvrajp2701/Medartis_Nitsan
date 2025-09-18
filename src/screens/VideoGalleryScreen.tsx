@@ -120,7 +120,7 @@ const VideoGalleryScreen: React.FC = () => {
 
       {/* Bottom Navigation Bar */}
       <BottomNavBar
-        activeTab="Videos"
+        activeTab="VideoGallery"
         onTabPress={(tab) => console.log('BottomNavBar tab pressed:', tab)}
       />
     </View>

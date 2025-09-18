@@ -115,15 +115,15 @@ const HomeScreen: React.FC = () => {
             {/* Top Bar */}
             <View style={styles.topBar}>
                 <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-                    <Icon name="menu" size={24} color="#fff" />
+                    <Icon name="menu" size={27} color="#fff" />
                 </TouchableOpacity>
 
                 <View style={styles.topRight}>
-                    <Icon name="notifications-outline" size={22} color="#fff" style={styles.iconSpacing} />
+                    <Icon name="notifications-outline" size={25} color="#fff" style={styles.iconSpacing} />
                     <TouchableOpacity onPress={() => navigation.navigate('Favorite')}>
                         <Icon
                             name="heart-outline"
-                            size={24}
+                            size={27}
                             color="#fff"
                             style={styles.iconSpacing}
                         />
@@ -134,7 +134,7 @@ const HomeScreen: React.FC = () => {
 
             {/* Title with Left Icon */}
             <View style={styles.titleContainer}>
-                <Ionicons name="heart-outline" size={24} color="#000" style={styles.icon} />
+                <Ionicons name="newspaper-outline" size={24} color="#000" style={styles.icon} />
                 <Title text="Latest Updates" />
             </View>
 
@@ -156,13 +156,16 @@ const HomeScreen: React.FC = () => {
                         decelerationRate="fast"
                     />
                     <View style={styles.dotsContainer}>
-                        {videos.map((_, index) => (
+                        {videos.slice(0, 5).map((_, index) => (
                             <View
                                 key={index}
-                                style={[
-                                    styles.dot,
-                                    index === activeIndex ? styles.activeDot : null,
-                                ]}
+                                style={{
+                                    width: 20, // longer for line
+                                    height: 4, // thin height
+                                    marginHorizontal: 4,
+                                    marginVertical:4,
+                                    backgroundColor: index === activeIndex ? '#000000ff' : '#9b9b9b8b',
+                                }}
                             />
                         ))}
                     </View>
@@ -172,13 +175,13 @@ const HomeScreen: React.FC = () => {
             {/* Videos Section Header */}
             <View style={styles.sectionHeader}>
                 <View style={styles.titleRow}>
-                    <Ionicons name="play-circle-outline" size={24} color="#000" style={styles.icon} />
+                    <Ionicons name="play-circle-outline" size={27} color="#000" style={styles.icon} />
                     <Title text="Videos" />
                 </View>
 
                 {/* View All Button */}
-                <TouchableOpacity style={styles.viewAllBtn}>
-                    <Icon name="eye-outline" size={14} color="#FFF" style={{ marginRight: 4 }} />
+                <TouchableOpacity  onPress={() => navigation.navigate('VideoGallery')} style={styles.viewAllBtn}>
+                    <Icon name="eye" size={20} color="#FFF" style={{ marginRight: 4 }} />
                     <Text style={styles.viewAllText}>View All</Text>
                 </TouchableOpacity>
             </View>
@@ -201,13 +204,15 @@ const HomeScreen: React.FC = () => {
                         decelerationRate="fast"
                     />
                     <View style={styles.dotsContainer}>
-                        {videos.map((_, index) => (
+                        {videos.slice(0, 5).map((_, index) => (
                             <View
                                 key={index}
-                                style={[
-                                    styles.dot,
-                                    index === activeIndex ? styles.activeDot : null,
-                                ]}
+                                style={{
+                                    width: 20, // longer for line
+                                    height: 4, // thin height
+                                    marginHorizontal: 4,
+                                    backgroundColor: index === activeIndex ? '#FFD700' : '#3e3e3eff',
+                                }}
                             />
                         ))}
                     </View>

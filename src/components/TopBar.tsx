@@ -19,10 +19,10 @@ const TopBar: React.FC<TopBarProps> = ({ navigation }) => {
       {/* Right Icons */}
       <View style={styles.topRight}>
         <TouchableOpacity onPress={() => navigation.navigate('Favorite')}>
-          <Icon name="heart-outline" size={24} color="#fff" style={styles.iconSpacing} />
+          <Icon name="heart-outline" size={27} color="#fff" style={styles.iconSpacing} />
         </TouchableOpacity>
-        <Icon name="notifications-outline" size={22} color="#fff" style={styles.iconSpacing} />
-        <Icon name="filter-outline" size={22} color="#fff" style={styles.iconSpacing} />
+        <Icon name="notifications-outline" size={27} color="#fff" style={styles.iconSpacing} />
+        <Icon name="filter-outline" size={27} color="#fff" style={styles.iconSpacing} />
       </View>
     </View>
   );

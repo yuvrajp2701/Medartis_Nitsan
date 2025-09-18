@@ -6,49 +6,51 @@ const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#e1e1e1ff',
   },
 
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#222',
-    padding: isTablet?20:12,
+    padding: isTablet ? 20 : 22,
     borderBottomWidth: 1,
     borderColor: '#444',
+    marginTop: 20,
   },
 
   topRight: {
     flexDirection: 'row',
-    marginRight: isTablet?950:'auto',
+    marginRight: isTablet ? 950 : 'auto',
   },
-titleRow: {
+  titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: isTablet?-20:-10,
-},
+    marginVertical: isTablet ? -20 : -5,
+  },
   viewAllBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#000',
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 8,
     borderRadius: 6,
+    marginBottom:15,
   },
   viewAllText: {
     color: '#FFF',
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: 17,
+    fontWeight: '400',
   },
   iconSpacing: {
-    marginLeft: isTablet?23:16,
+    marginLeft: isTablet ? 23 : 16,
     color: '#fff',
   },
 
   brand: {
     marginLeft: 16,
-    fontWeight: 'bold',
-    fontSize: isTablet?26:18,
+    // fontWeight: 'bold',
+    fontSize: isTablet ? 26 : 22,
     color: '#fff',
   },
 
@@ -78,11 +80,8 @@ titleRow: {
   },
 
   dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#ccc',
-    marginHorizontal: 5,
+    borderRadius: 5,
+    marginHorizontal: 4,       // space between dots
   },
 
   activeDot: {
@@ -96,8 +95,9 @@ titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 16,
-    marginVertical: 20,
-    marginBottom: -20,
+    // marginVertical: 20,
+    marginTop: 30,
+    marginBottom: -5,
   },
 
   icon: {
@@ -105,18 +105,22 @@ titleRow: {
     marginTop: -25,
   },
   dotsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 12,
-    marginBottom: 20,
+    flexDirection: 'row',      // ensures dots are in one line
+    justifyContent: 'center',  // center align
+    alignItems: 'center',
+    marginTop: 23,
+    marginBottom: 16,
   },
   sectionHeader: {
+    backgroundColor: '#ffffffa4',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
+    // paddingBottom:,
+    paddingTop:30,
     marginTop: 20,
-    marginBottom: 10,
+    marginBottom: 3,
   },
 
   sectionTitle: {

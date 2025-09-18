@@ -3,7 +3,7 @@ import { View, FlatList, ActivityIndicator, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
-import VideoCard, { VideoItem } from '../components/VideoCard';
+// import VideoCard, { VideoItem } from '../components/VideoCard';
 import VideoHeader from '../components/VideoHeader';
 import BottomNavBar from '../components/BottomNavBar';
 import styles from '../styles/videoGalleryStyles';
@@ -37,10 +37,13 @@ const FavoriteScreen: React.FC = () => {
   }, [navigation]);
 
   const renderItem = ({ item }: { item: VideoItem }) => (
-    <VideoCardList
-      video={item}
-      onPress={(videoId) => navigation.navigate('VideoDetail', { videoId })}
-    />
+   <VideoCardList
+  video={item}
+  isFavorite={false}
+  onToggleFavorite={() => {}}
+  navigation={navigation} // Pass it down!
+/>
+
   );
 
   if (loading) {

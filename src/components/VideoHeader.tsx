@@ -41,6 +41,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginTop: 20,
+
   },
   headerTitle: { color: '#fff', fontSize: isTablet ? 24 : 18, fontWeight: '500' },
   headerActions: { flexDirection: 'row', alignItems: 'center' },

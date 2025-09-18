@@ -11,6 +11,8 @@ const Filters: React.FC = () => {
 
   return (
     <>
+        <View style={styles.marginTopp}>
+
       <View style={styles.filterRow}>
         <TouchableOpacity style={styles.filterBox} onPress={() => console.log('Area selected')}>
           <Text style={styles.filterText}>{selectedArea}</Text>
@@ -33,6 +35,7 @@ const Filters: React.FC = () => {
           <Text style={styles.filterText}>{selectedLanguage}</Text>
           <Icon name="chevron-down" size={20} color="#333" />
         </TouchableOpacity>
+      </View>
       </View>
     </>
   );

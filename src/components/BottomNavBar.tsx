@@ -56,7 +56,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ activeTab, onTabPress }) =>
         >
           <Ionicons
             name={activeTab === tab.key ? tab.activeIcon : tab.icon}
-            size={22}
+            size={27}
             color={activeTab === tab.key ? '#FFD700' : '#fff'} // Yellow for active
           />
           <Text
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: '#000', // Black background
-    paddingVertical: 10,
+    paddingVertical: 14,
     borderTopWidth: 0.5,
     borderTopColor: '#333',
   },
